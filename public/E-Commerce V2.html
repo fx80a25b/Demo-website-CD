@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="th">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ร้านค้าออนไลน์</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Prompt', sans-serif;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    .product-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .category-card {
+      transition: all 0.3s ease;
+    }
+    
+    .category-card:hover {
+      transform: scale(1.05);
+    }
+    
+    .cart-badge {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-primary {
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+    }
+    
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="bg-white"><!-- Navigation -->
+  <nav class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+     <div class="flex items-center"><button id="mobile-menu-btn" class="md:hidden mr-4 p-2 rounded hover:bg-blue-800">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+       </svg></button>
+      <h1 id="store-name" class="text-xl sm:text-2xl font-bold">ร้านค้าออนไลน์</h1>
+     </div>
+     <div class="hidden md:flex space-x-6"><a href="#home" class="hover:text-sky-400 transition">หน้าแรก</a> <a href="#products" class="hover:text-sky-400 transition">สินค้า</a> <a href="#categories" class="hover:text-sky-400 transition">หมวดหมู่</a>
+     </div>
+     <div class="flex items-center space-x-4"><button id="search-btn" class="p-2 rounded hover:bg-blue-800 transition">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+       </svg></button> <button id="cart-btn" class="relative p-2 rounded hover:bg-blue-800 transition">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+       </svg><span id="cart-count" class="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center cart-badge">0</span> </button>
+     </div>
+    </div>
+   </div>
+  </nav><!-- Mobile Menu -->
+  <div id="mobile-menu" class="mobile-menu fixed top-0 left-0 w-64 h-full bg-blue-900 text-white z-40 shadow-2xl">
+   <div class="p-6"><button id="close-menu-btn" class="mb-8 p-2 rounded hover:bg-blue-800">
+     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+     </svg></button>
+    <div class="space-y-4"><a href="#home" class="block py-2 hover:text-sky-400 transition">หน้าแรก</a> <a href="#products" class="block py-2 hover:text-sky-400 transition">สินค้า</a> <a href="#categories" class="block py-2 hover:text-sky-400 transition">หมวดหมู่</a>
+    </div>
+   </div>
+  </div><!-- Hero Banner -->
+  <section id="home" class="bg-gradient-to-r from-blue-900 to-sky-500 text-white py-16 sm:py-24">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 id="banner-title" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">ยินดีต้อนรับสู่ร้านค้าออนไลน์</h2>
+    <p id="banner-subtitle" class="text-lg sm:text-xl mb-8 opacity-90">สินค้าคุณภาพ ราคาดี จัดส่งรวดเร็ว</p><button class="btn-primary bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg font-semibold text-lg"> เริ่มช้อปปิ้ง </button>
+   </div>
+  </section><!-- Categories -->
+  <section id="categories" class="py-12 sm:py-16 bg-gray-50">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h3 id="category-title" class="text-2xl sm:text-3xl font-bold text-blue-900 mb-8 text-center">หมวดหมู่สินค้า</h3>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+     <div class="category-card bg-white p-6 rounded-lg shadow-md text-center cursor-pointer" data-category="electronics">
+      <div class="text-4xl mb-3">
+       📱
+      </div>
+      <h4 class="font-semibold text-blue-900">อิเล็กทรอนิกส์</h4>
+     </div>
+     <div class="category-card bg-white p-6 rounded-lg shadow-md text-center cursor-pointer" data-category="fashion">
+      <div class="text-4xl mb-3">
+       👕
+      </div>
+      <h4 class="font-semibold text-blue-900">แฟชั่น</h4>
+     </div>
+     <div class="category-card bg-white p-6 rounded-lg shadow-md text-center cursor-pointer" data-category="home">
+      <div class="text-4xl mb-3">
+       🏠
+      </div>
+      <h4 class="font-semibold text-blue-900">ของใช้ในบ้าน</h4>
+     </div>
+     <div class="category-card bg-white p-6 rounded-lg shadow-md text-center cursor-pointer" data-category="beauty">
+      <div class="text-4xl mb-3">
+       💄
+      </div>
+      <h4 class="font-semibold text-blue-900">ความงาม</h4>
+     </div>
+    </div>
+   </div>
+  </section><!-- Products -->
+  <section id="products" class="py-12 sm:py-16">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+     <h3 id="featured-title" class="text-2xl sm:text-3xl font-bold text-blue-900">สินค้าแนะนำ</h3>
+     <div class="flex gap-2 w-full sm:w-auto"><input type="text" id="search-input" placeholder="ค้นหาสินค้า..." class="flex-1 sm:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"> <select id="filter-category" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"> <option value="all">ทั้งหมด</option> <option value="electronics">อิเล็กทรอนิกส์</option> <option value="fashion">แฟชั่น</option> <option value="home">ของใช้ในบ้าน</option> <option value="beauty">ความงาม</option> </select>
+     </div>
+    </div>
+    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"><!-- Products will be rendered here -->
+    </div>
+   </div>
+  </section><!-- Product Detail Modal -->
+  <div id="product-modal" class="modal">
+   <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full mx-4 my-8 overflow-hidden">
+    <div class="flex justify-between items-center p-6 border-b">
+     <h3 class="text-2xl font-bold text-blue-900">รายละเอียดสินค้า</h3><button id="close-product-modal" class="text-gray-500 hover:text-gray-700">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg></button>
+    </div>
+    <div id="product-detail-content" class="p-6"><!-- Product details will be rendered here -->
+    </div>
+   </div>
+  </div><!-- Cart Modal -->
+  <div id="cart-modal" class="modal">
+   <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full mx-4 my-8 overflow-hidden">
+    <div class="flex justify-between items-center p-6 border-b bg-blue-900 text-white">
+     <h3 class="text-2xl font-bold">ตะกร้าสินค้า</h3><button id="close-cart-modal" class="text-white hover:text-sky-400">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg></button>
+    </div>
+    <div id="cart-content" class="p-6 max-h-96 overflow-y-auto"><!-- Cart items will be rendered here -->
+    </div>
+    <div class="p-6 border-t bg-gray-50">
+     <div class="flex justify-between items-center mb-4"><span class="text-lg font-semibold text-blue-900">ยอดรวม:</span> <span id="cart-total" class="text-2xl font-bold text-green-500">฿0</span>
+     </div><button id="checkout-btn" class="btn-primary w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold text-lg"> ดำเนินการชำระเงิน </button>
+    </div>
+   </div>
+  </div><!-- Checkout Modal -->
+  <div id="checkout-modal" class="modal">
+   <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full mx-4 my-8 overflow-hidden">
+    <div class="flex justify-between items-center p-6 border-b bg-blue-900 text-white">
+     <h3 class="text-2xl font-bold">ชำระเงิน</h3><button id="close-checkout-modal" class="text-white hover:text-sky-400">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg></button>
+    </div>
+    <div class="p-6">
+     <form id="checkout-form">
+      <div class="mb-4"><label for="customer-name" class="block text-sm font-semibold text-blue-900 mb-2">ชื่อ-นามสกุล</label> <input type="text" id="customer-name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500">
+      </div>
+      <div class="mb-4"><label for="customer-phone" class="block text-sm font-semibold text-blue-900 mb-2">เบอร์โทรศัพท์</label> <input type="tel" id="customer-phone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500">
+      </div>
+      <div class="mb-4"><label for="customer-address" class="block text-sm font-semibold text-blue-900 mb-2">ที่อยู่จัดส่ง</label> <textarea id="customer-address" required rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+      </div>
+      <div class="mb-6"><label for="payment-method" class="block text-sm font-semibold text-blue-900 mb-2">วิธีการชำระเงิน</label> <select id="payment-method" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"> <option value="">เลือกวิธีการชำระเงิน</option> <option value="transfer">โอนเงินผ่านธนาคาร</option> <option value="credit">บัตรเครดิต/เดบิต</option> <option value="ewallet">กระเป๋าเงินอิเล็กทรอนิกส์</option> <option value="cod">เก็บเงินปลายทาง</option> </select>
+      </div>
+      <div class="flex justify-between items-center mb-4"><span class="text-lg font-semibold text-blue-900">ยอดรวมทั้งหมด:</span> <span id="checkout-total" class="text-2xl font-bold text-green-500">฿0</span>
+      </div><button type="submit" class="btn-primary w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold text-lg"> ยืนยันการสั่งซื้อ </button>
+     </form>
+    </div>
+   </div>
+  </div><!-- Success Message -->
+  <div id="success-message" class="fixed top-20 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+   <div class="flex items-center gap-3">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+    </svg><span id="success-text">เพิ่มสินค้าลงตะกร้าแล้ว</span>
+   </div>
+  </div>
+  <script>
+    // Reference products data
+    const productsData = [
+      { id: 'p1', name: 'สมาร์ทโฟน X Pro', price: 15990, category: 'electronics', emoji: '📱', rating: 4.8, stock: 25, description: 'สมาร์ทโฟนรุ่นใหม่ล่าสุด หน้าจอ 6.7 นิ้ว กล้อง 108MP แบตเตอรี่ 5000mAh' },
+      { id: 'p2', name: 'หูฟังไร้สาย Pro', price: 3990, category: 'electronics', emoji: '🎧', rating: 4.6, stock: 40, description: 'หูฟังบลูทูธคุณภาพสูง เสียงใส ตัดเสียงรบกวน ใช้งานได้ 30 ชั่วโมง' },
+      { id: 'p3', name: 'เสื้อยืดพรีเมียม', price: 590, category: 'fashion', emoji: '👕', rating: 4.5, stock: 100, description: 'เสื้อยืดผ้าคอตตอน 100% นุ่มสบาย ระบายอากาศดี มีหลายสี' },
+      { id: 'p4', name: 'กางเกงยีนส์', price: 1290, category: 'fashion', emoji: '👖', rating: 4.7, stock: 60, description: 'กางเกงยีนส์ทรงสวย ผ้ายืดหยุ่น สวมใส่สบาย ทนทาน' },
+      { id: 'p5', name: 'โคมไฟตั้งโต๊ะ', price: 890, category: 'home', emoji: '💡', rating: 4.4, stock: 35, description: 'โคมไฟ LED ปรับความสว่างได้ ประหยัดไฟ ดีไซน์ทันสมัย' },
+      { id: 'p6', name: 'หมอนหนุน Premium', price: 690, category: 'home', emoji: '🛏️', rating: 4.9, stock: 50, description: 'หมอนหนุนเมมโมรี่โฟม รองรับศีรษะและคอ นอนหลับสบาย' },
+      { id: 'p7', name: 'ครีมบำรุงผิว', price: 1490, category: 'beauty', emoji: '💄', rating: 4.8, stock: 45, description: 'ครีมบำรุงผิวหน้า สูตรธรรมชาติ ช่วยให้ผิวชุ่มชื้น กระจ่างใส' },
+      { id: 'p8', name: 'เซรั่มวิตามินซี', price: 1890, category: 'beauty', emoji: '✨', rating: 4.7, stock: 30, description: 'เซรั่มวิตามินซีเข้มข้น ลดจุดด่างดำ ผิวกระจ่างใสขึ้น' }
+    ];
+
+    // Config and state
+    const defaultConfig = {
+      store_name: 'ร้านค้าออนไลน์',
+      banner_title: 'ยินดีต้อนรับสู่ร้านค้าออนไลน์',
+      banner_subtitle: 'สินค้าคุณภาพ ราคาดี จัดส่งรวดเร็ว',
+      featured_title: 'สินค้าแนะนำ',
+      category_title: 'หมวดหมู่สินค้า',
+      background_color: '#FFFFFF',
+      surface_color: '#F9FAFB',
+      text_color: '#1E3A8A',
+      primary_action_color: '#10B981',
+      secondary_action_color: '#38BDF8',
+      font_family: 'Prompt',
+      font_size: 16
+    };
+
+    let cartItems = [];
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    // Data SDK handler
+    const dataHandler = {
+      onDataChanged(data) {
+        cartItems = data;
+        updateCartUI();
+      }
+    };
+
+    // Initialize SDKs
+    async function initializeApp() {
+      const dataResult = await window.dataSdk.init(dataHandler);
+      if (!dataResult.isOk) {
+        console.error('Failed to initialize data SDK');
+      }
+
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const baseFontStack = 'sans-serif';
+            
+            document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+            document.body.style.backgroundColor = config.background_color || defaultConfig.background_color;
+            
+            document.getElementById('store-name').textContent = config.store_name || defaultConfig.store_name;
+            document.getElementById('banner-title').textContent = config.banner_title || defaultConfig.banner_title;
+            document.getElementById('banner-subtitle').textContent = config.banner_subtitle || defaultConfig.banner_subtitle;
+            document.getElementById('featured-title').textContent = config.featured_title || defaultConfig.featured_title;
+            document.getElementById('category-title').textContent = config.category_title || defaultConfig.category_title;
+            
+            document.getElementById('banner-title').style.fontSize = `${baseSize * 2}px`;
+            document.getElementById('banner-subtitle').style.fontSize = `${baseSize * 1.25}px`;
+            document.getElementById('featured-title').style.fontSize = `${baseSize * 1.5}px`;
+            document.getElementById('category-title').style.fontSize = `${baseSize * 1.5}px`;
+            
+            const sections = document.querySelectorAll('#categories, #products');
+            sections.forEach(section => {
+              section.style.backgroundColor = config.surface_color || defaultConfig.surface_color;
+            });
+            
+            const textElements = document.querySelectorAll('h1, h2, h3, h4, .text-blue-900');
+            textElements.forEach(el => {
+              el.style.color = config.text_color || defaultConfig.text_color;
+            });
+            
+            const primaryButtons = document.querySelectorAll('.btn-primary');
+            primaryButtons.forEach(btn => {
+              btn.style.backgroundColor = config.primary_action_color || defaultConfig.primary_action_color;
+            });
+            
+            const secondaryLinks = document.querySelectorAll('nav a, .hover\\:text-sky-400');
+            secondaryLinks.forEach(link => {
+              link.style.color = config.secondary_action_color || defaultConfig.secondary_action_color;
+            });
+          },
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () => config.background_color || defaultConfig.background_color,
+                set: (value) => {
+                  config.background_color = value;
+                  window.elementSdk.setConfig({ background_color: value });
+                }
+              },
+              {
+                get: () => config.surface_color || defaultConfig.surface_color,
+                set: (value) => {
+                  config.surface_color = value;
+                  window.elementSdk.setConfig({ surface_color: value });
+                }
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) => {
+                  config.text_color = value;
+                  window.elementSdk.setConfig({ text_color: value });
+                }
+              },
+              {
+                get: () => config.primary_action_color || defaultConfig.primary_action_color,
+                set: (value) => {
+                  config.primary_action_color = value;
+                  window.elementSdk.setConfig({ primary_action_color: value });
+                }
+              },
+              {
+                get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+                set: (value) => {
+                  config.secondary_action_color = value;
+                  window.elementSdk.setConfig({ secondary_action_color: value });
+                }
+              }
+            ],
+            borderables: [],
+            fontEditable: {
+              get: () => config.font_family || defaultConfig.font_family,
+              set: (value) => {
+                config.font_family = value;
+                window.elementSdk.setConfig({ font_family: value });
+              }
+            },
+            fontSizeable: {
+              get: () => config.font_size || defaultConfig.font_size,
+              set: (value) => {
+                config.font_size = value;
+                window.elementSdk.setConfig({ font_size: value });
+              }
+            }
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ['store_name', config.store_name || defaultConfig.store_name],
+            ['banner_title', config.banner_title || defaultConfig.banner_title],
+            ['banner_subtitle', config.banner_subtitle || defaultConfig.banner_subtitle],
+            ['featured_title', config.featured_title || defaultConfig.featured_title],
+            ['category_title', config.category_title || defaultConfig.category_title]
+          ])
+        });
+      }
+
+      renderProducts();
+    }
+
+    // Render products
+    function renderProducts() {
+      const grid = document.getElementById('products-grid');
+      const filteredProducts = productsData.filter(p => {
+        const matchesCategory = currentFilter === 'all' || p.category === currentFilter;
+        const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+
+      grid.innerHTML = filteredProducts.map(product => `
+        <div class="product-card bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" data-product-id="${product.id}">
+          <div class="bg-gradient-to-br from-sky-100 to-blue-100 h-48 flex items-center justify-center text-6xl">
+            ${product.emoji}
+          </div>
+          <div class="p-4">
+            <h4 class="font-semibold text-lg text-blue-900 mb-2">${product.name}</h4>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-yellow-500">⭐</span>
+              <span class="text-sm text-gray-600">${product.rating}</span>
+              <span class="text-sm text-gray-500">• คงเหลือ ${product.stock}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-2xl font-bold text-green-500">฿${product.price.toLocaleString()}</span>
+              <button class="add-to-cart-btn bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold transition" data-product-id="${product.id}">
+                เพิ่ม
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Add event listeners
+      document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (!e.target.classList.contains('add-to-cart-btn')) {
+            showProductDetail(card.dataset.productId);
+          }
+        });
+      });
+
+      document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const productId = btn.dataset.productId;
+          await addToCart(productId);
+        });
+      });
+    }
+
+    // Show product detail
+    function showProductDetail(productId) {
+      const product = productsData.find(p => p.id === productId);
+      if (!product) return;
+
+      const content = document.getElementById('product-detail-content');
+      content.innerHTML = `
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-gradient-to-br from-sky-100 to-blue-100 rounded-lg h-80 flex items-center justify-center text-9xl">
+            ${product.emoji}
+          </div>
+          <div>
+            <h4 class="text-3xl font-bold text-blue-900 mb-4">${product.name}</h4>
+            <div class="flex items-center gap-3 mb-4">
+              <span class="text-yellow-500 text-xl">⭐</span>
+              <span class="text-lg font-semibold">${product.rating}</span>
+              <span class="text-gray-500">• คงเหลือ ${product.stock} ชิ้น</span>
+            </div>
+            <p class="text-gray-700 mb-6 leading-relaxed">${product.description}</p>
+            <div class="mb-6">
+              <span class="text-4xl font-bold text-green-500">฿${product.price.toLocaleString()}</span>
+            </div>
+            <button class="btn-primary bg-green-500 hover:bg-green-600 text-white w-full py-3 rounded-lg font-semibold text-lg" onclick="addToCart('${product.id}')">
+              เพิ่มลงตะกร้า
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('product-modal').classList.add('active');
+    }
+
+    // Add to cart
+    async function addToCart(productId) {
+      if (cartItems.length >= 999) {
+        showMessage('ไม่สามารถเพิ่มสินค้าได้ ตะกร้าเต็มแล้ว (สูงสุด 999 รายการ)');
+        return;
+      }
+
+      const existingItem = cartItems.find(item => item.product_id === productId);
+      
+      if (existingItem) {
+        const updatedItem = { ...existingItem, quantity: existingItem.quantity + 1 };
+        const result = await window.dataSdk.update(updatedItem);
+        if (result.isOk) {
+          showMessage('เพิ่มจำนวนสินค้าในตะกร้าแล้ว');
+        } else {
+          showMessage('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+        }
+      } else {
+        const result = await window.dataSdk.create({
+          product_id: productId,
+          quantity: 1,
+          added_at: new Date().toISOString()
+        });
+        if (result.isOk) {
+          showMessage('เพิ่มสินค้าลงตะกร้าแล้ว');
+        } else {
+          showMessage('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+        }
+      }
+    }
+
+    // Update cart UI
+    function updateCartUI() {
+      const count = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cart-count').textContent = count;
+
+      const cartContent = document.getElementById('cart-content');
+      if (cartItems.length === 0) {
+        cartContent.innerHTML = '<p class="text-center text-gray-500 py-8">ตะกร้าสินค้าว่างเปล่า</p>';
+        document.getElementById('cart-total').textContent = '฿0';
+        document.getElementById('checkout-total').textContent = '฿0';
+        return;
+      }
+
+      let total = 0;
+      cartContent.innerHTML = cartItems.map(item => {
+        const product = productsData.find(p => p.id === item.product_id);
+        if (!product) return '';
+        const itemTotal = product.price * item.quantity;
+        total += itemTotal;
+        return `
+          <div class="flex items-center gap-4 mb-4 pb-4 border-b">
+            <div class="text-4xl">${product.emoji}</div>
+            <div class="flex-1">
+              <h5 class="font-semibold text-blue-900">${product.name}</h5>
+              <p class="text-green-500 font-bold">฿${product.price.toLocaleString()}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="decrease-qty bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded flex items-center justify-center" data-item-id="${item.__backendId}">-</button>
+              <span class="w-8 text-center font-semibold">${item.quantity}</span>
+              <button class="increase-qty bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded flex items-center justify-center" data-item-id="${item.__backendId}">+</button>
+            </div>
+            <button class="remove-item text-red-500 hover:text-red-700" data-item-id="${item.__backendId}">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('cart-total').textContent = `฿${total.toLocaleString()}`;
+      document.getElementById('checkout-total').textContent = `฿${total.toLocaleString()}`;
+
+      // Add event listeners for cart actions
+      document.querySelectorAll('.increase-qty').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const item = cartItems.find(i => i.__backendId === btn.dataset.itemId);
+          if (item) {
+            const updatedItem = { ...item, quantity: item.quantity + 1 };
+            await window.dataSdk.update(updatedItem);
+          }
+        });
+      });
+
+      document.querySelectorAll('.decrease-qty').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const item = cartItems.find(i => i.__backendId === btn.dataset.itemId);
+          if (item) {
+            if (item.quantity > 1) {
+              const updatedItem = { ...item, quantity: item.quantity - 1 };
+              await window.dataSdk.update(updatedItem);
+            } else {
+              await window.dataSdk.delete(item);
+            }
+          }
+        });
+      });
+
+      document.querySelectorAll('.remove-item').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const item = cartItems.find(i => i.__backendId === btn.dataset.itemId);
+          if (item) {
+            await window.dataSdk.delete(item);
+          }
+        });
+      });
+    }
+
+    // Show message
+    function showMessage(text) {
+      const message = document.getElementById('success-message');
+      document.getElementById('success-text').textContent = text;
+      message.style.transform = 'translateX(0)';
+      setTimeout(() => {
+        message.style.transform = 'translateX(150%)';
+      }, 3000);
+    }
+
+    // Event listeners
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.add('active');
+    });
+
+    document.getElementById('close-menu-btn').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.remove('active');
+    });
+
+    document.getElementById('cart-btn').addEventListener('click', () => {
+      document.getElementById('cart-modal').classList.add('active');
+    });
+
+    document.getElementById('close-cart-modal').addEventListener('click', () => {
+      document.getElementById('cart-modal').classList.remove('active');
+    });
+
+    document.getElementById('close-product-modal').addEventListener('click', () => {
+      document.getElementById('product-modal').classList.remove('active');
+    });
+
+    document.getElementById('checkout-btn').addEventListener('click', () => {
+      if (cartItems.length === 0) {
+        showMessage('กรุณาเพิ่มสินค้าลงตะกร้าก่อน');
+        return;
+      }
+      document.getElementById('cart-modal').classList.remove('active');
+      document.getElementById('checkout-modal').classList.add('active');
+    });
+
+    document.getElementById('close-checkout-modal').addEventListener('click', () => {
+      document.getElementById('checkout-modal').classList.remove('active');
+    });
+
+    document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Clear cart
+      for (const item of cartItems) {
+        await window.dataSdk.delete(item);
+      }
+      
+      document.getElementById('checkout-modal').classList.remove('active');
+      showMessage('สั่งซื้อสำเร็จ! ขอบคุณที่ใช้บริการ');
+      document.getElementById('checkout-form').reset();
+    });
+
+    document.getElementById('filter-category').addEventListener('change', (e) => {
+      currentFilter = e.target.value;
+      renderProducts();
+    });
+
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderProducts();
+    });
+
+    document.querySelectorAll('.category-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const category = card.dataset.category;
+        currentFilter = category;
+        document.getElementById('filter-category').value = category;
+        renderProducts();
+        document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Initialize
+    initializeApp();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'996ffae263ec893f',t:'MTc2MTg4MDQ0My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

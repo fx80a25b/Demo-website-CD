@@ -1,0 +1,1484 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Defense</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: linear-gradient(180deg, #0A0A0F 0%, #111827 100%);
+      color: #E5E7EB;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(10, 10, 15, 0.95);
+      backdrop-filter: blur(15px);
+      z-index: 1000;
+      border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+    }
+
+    .nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #7C3AED 0%, #22D3EE 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      z-index: 1001;
+      position: relative;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-links a {
+      color: #E5E7EB;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-links a:hover {
+      color: #22D3EE;
+      background: rgba(34, 211, 238, 0.1);
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+    }
+
+    .dropdown-arrow {
+      font-size: 0.8rem;
+      transition: transform 0.3s;
+    }
+
+    .nav-item:hover .dropdown-arrow {
+      transform: rotate(180deg);
+    }
+
+    /* Dropdown Menus */
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 12px;
+      padding: 1rem 0;
+      min-width: 250px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-item:hover .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 0.75rem 1.5rem;
+      color: #E5E7EB;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    .dropdown a:hover {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(34, 211, 238, 0.2) 100%);
+      color: #22D3EE;
+      padding-left: 2rem;
+      box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: #E5E7EB;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .mobile-menu-toggle:hover {
+      color: #22D3EE;
+      background: rgba(34, 211, 238, 0.1);
+    }
+
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 300px;
+      height: 100%;
+      background: rgba(10, 10, 15, 0.98);
+      backdrop-filter: blur(20px);
+      border-left: 1px solid rgba(124, 58, 237, 0.3);
+      padding: 2rem;
+      transition: right 0.3s;
+      z-index: 1002;
+      overflow-y: auto;
+    }
+
+    .mobile-menu.active {
+      right: 0;
+    }
+
+    .mobile-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+    }
+
+    .mobile-close {
+      background: none;
+      border: none;
+      color: #E5E7EB;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .mobile-close:hover {
+      color: #22D3EE;
+      background: rgba(34, 211, 238, 0.1);
+    }
+
+    .mobile-nav-links {
+      list-style: none;
+    }
+
+    .mobile-nav-item {
+      margin-bottom: 1rem;
+    }
+
+    .mobile-nav-links > li > a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      color: #E5E7EB;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .mobile-nav-links > li > a:hover {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(34, 211, 238, 0.2) 100%);
+      color: #22D3EE;
+    }
+
+    .mobile-submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s;
+      background: rgba(17, 24, 39, 0.5);
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+
+    .mobile-submenu.active {
+      max-height: 300px;
+    }
+
+    .mobile-submenu a {
+      display: block;
+      padding: 0.75rem 1.5rem;
+      color: #9CA3AF;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+    }
+
+    .mobile-submenu a:hover {
+      color: #22D3EE;
+      background: rgba(34, 211, 238, 0.1);
+      border-left-color: #22D3EE;
+      padding-left: 2rem;
+    }
+
+    .mobile-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      z-index: 999;
+    }
+
+    .mobile-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      min-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding-top: 5rem;
+    }
+
+    .hero-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.3;
+    }
+
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #22D3EE;
+      border-radius: 50%;
+      animation: float 20s infinite;
+      box-shadow: 0 0 10px #22D3EE;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translate(100px, -100%); opacity: 0; }
+    }
+
+    .grid-overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(124, 58, 237, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124, 58, 237, 0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gridMove 20s linear infinite;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 900px;
+      padding: 2rem;
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #FFFFFF 0%, #22D3EE 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      color: #9CA3AF;
+      margin-bottom: 3rem;
+      line-height: 1.6;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 1rem 2.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #7C3AED 0%, #22D3EE 100%);
+      color: white;
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.5);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.8);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #22D3EE;
+      border: 2px solid #22D3EE;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(34, 211, 238, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Section Styles */
+    section {
+      padding: 6rem 0;
+      position: relative;
+    }
+
+    .section-title {
+      font-size: 3rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #FFFFFF 0%, #7C3AED 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: #9CA3AF;
+      font-size: 1.2rem;
+      margin-bottom: 4rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* About Section */
+    .about {
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.5) 0%, rgba(10, 10, 15, 0.5) 100%);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .stat-card {
+      background: rgba(124, 58, 237, 0.1);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: #7C3AED;
+      box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #22D3EE;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: #9CA3AF;
+      font-size: 1rem;
+    }
+
+    /* Solutions Section */
+    .solutions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .solution-card {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(34, 211, 238, 0.1) 100%);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 16px;
+      padding: 2.5rem;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .solution-card:hover {
+      transform: translateY(-10px);
+      border-color: #22D3EE;
+      box-shadow: 0 20px 40px rgba(34, 211, 238, 0.2);
+    }
+
+    .solution-icon {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .solution-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #FFFFFF;
+    }
+
+    .solution-card p {
+      color: #9CA3AF;
+      line-height: 1.6;
+    }
+
+    /* Platform Section */
+    .platform {
+      background: linear-gradient(180deg, rgba(10, 10, 15, 0.8) 0%, rgba(17, 24, 39, 0.8) 100%);
+    }
+
+    .platform-visual {
+      margin-top: 3rem;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(34, 211, 238, 0.2) 100%);
+      border: 2px solid rgba(124, 58, 237, 0.4);
+      border-radius: 20px;
+      padding: 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .platform-visual::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.3) 0%, transparent 70%);
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .platform-icon {
+      font-size: 5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Partners Section */
+    .partners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .partner-card {
+      background: rgba(17, 24, 39, 0.5);
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .partner-card:hover {
+      border-color: #7C3AED;
+      transform: translateY(-5px);
+    }
+
+    .partner-card h4 {
+      color: #FFFFFF;
+      font-size: 1.2rem;
+    }
+
+    /* Insights Section */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .insight-card {
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(10, 10, 15, 0.8) 100%);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .insight-card:hover {
+      transform: translateY(-5px);
+      border-color: #22D3EE;
+      box-shadow: 0 15px 35px rgba(34, 211, 238, 0.2);
+    }
+
+    .insight-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #7C3AED 0%, #22D3EE 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .insight-content {
+      padding: 2rem;
+    }
+
+    .insight-content h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: #FFFFFF;
+    }
+
+    .insight-content p {
+      color: #9CA3AF;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .insight-date {
+      color: #7C3AED;
+      font-size: 0.9rem;
+    }
+
+    /* Contact Section */
+    .contact {
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.5) 0%, rgba(10, 10, 15, 0.9) 100%);
+      position: relative;
+    }
+
+    .contact-form {
+      max-width: 600px;
+      margin: 3rem auto 0;
+      background: rgba(17, 24, 39, 0.6);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 16px;
+      padding: 3rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #E5E7EB;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 1rem;
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 8px;
+      color: #E5E7EB;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #22D3EE;
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(10, 10, 15, 0.95);
+      border-top: 1px solid rgba(124, 58, 237, 0.3);
+      padding: 3rem 0 1.5rem;
+      text-align: center;
+    }
+
+    .footer-content {
+      color: #9CA3AF;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #9CA3AF;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: #22D3EE;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .container {
+        padding: 0 1.5rem;
+      }
+
+      .nav-content {
+        padding: 1.5rem 1.5rem;
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+      }
+
+      .solutions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+
+      .insights-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+
+      .partners-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem;
+      }
+
+      .nav-content {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      .hero {
+        padding-top: 4rem;
+        min-height: 90%;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+        line-height: 1.1;
+      }
+
+      .hero p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+        text-align: center;
+      }
+
+      .section-title {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .section-subtitle {
+        font-size: 1rem;
+        margin-bottom: 2.5rem;
+      }
+
+      section {
+        padding: 4rem 0;
+      }
+
+      .solutions-grid,
+      .insights-grid,
+      .partners-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .stat-card {
+        padding: 1.5rem;
+      }
+
+      .solution-card {
+        padding: 2rem;
+      }
+
+      .contact-form {
+        padding: 2rem;
+        margin-top: 2rem;
+      }
+
+      .form-buttons {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .form-buttons .btn {
+        width: 100%;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .mobile-menu {
+        width: 280px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .section-title {
+        font-size: 1.75rem;
+      }
+
+      .solution-card,
+      .stat-card {
+        padding: 1.5rem;
+      }
+
+      .contact-form {
+        padding: 1.5rem;
+      }
+
+      .mobile-menu {
+        width: 100%;
+        right: -100%;
+      }
+
+      .mobile-menu.active {
+        right: 0;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .container {
+        padding: 0 0.75rem;
+      }
+
+      .nav-content {
+        padding: 0.75rem;
+      }
+
+      .hero h1 {
+        font-size: 1.75rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+      }
+
+      .solution-card {
+        padding: 1.25rem;
+      }
+
+      .solution-icon {
+        font-size: 2.5rem;
+      }
+
+      .btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Navigation -->
+  <nav>
+   <div class="nav-content">
+    <div class="logo" id="company-name">
+     CyberDefense
+    </div>
+    <ul class="nav-links">
+     <li class="nav-item"><a href="#about">About</a></li>
+     <li class="nav-item"><a href="#solutions">Solutions <span class="dropdown-arrow">▼</span></a>
+      <div class="dropdown"><a href="#endpoint">Endpoint Protection</a> <a href="#network">Network Security</a> <a href="#cloud">Cloud Security</a> <a href="#intelligence">Threat Intelligence</a>
+      </div></li>
+     <li class="nav-item"><a href="#platform">Products <span class="dropdown-arrow">▼</span></a>
+      <div class="dropdown"><a href="#cybershield-ai">CyberShield AI</a> <a href="#threateye">ThreatEye Platform</a> <a href="#secureedge">SecureEdge Gateway</a>
+      </div></li>
+     <li class="nav-item"><a href="#insights">Insights <span class="dropdown-arrow">▼</span></a>
+      <div class="dropdown"><a href="#threat-reports">Threat Reports</a> <a href="#security-blog">Security Blog</a> <a href="#research">Research Papers</a> <a href="#webinars">Webinars</a>
+      </div></li>
+     <li class="nav-item"><a href="#contact">Contact</a></li>
+    </ul><button class="mobile-menu-toggle" id="mobile-toggle">☰</button>
+   </div>
+  </nav><!-- Mobile Menu Overlay -->
+  <div class="mobile-overlay" id="mobile-overlay"></div><!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+   <div class="mobile-menu-header">
+    <div class="logo">
+     CyberShield Defense
+    </div><button class="mobile-close" id="mobile-close">✕</button>
+   </div>
+   <ul class="mobile-nav-links">
+    <li class="mobile-nav-item"><a href="#about">About</a></li>
+    <li class="mobile-nav-item"><a href="#solutions" class="mobile-dropdown-toggle">Solutions <span class="dropdown-arrow">▼</span></a>
+     <div class="mobile-submenu"><a href="#endpoint">Endpoint Protection</a> <a href="#network">Network Security</a> <a href="#cloud">Cloud Security</a> <a href="#intelligence">Threat Intelligence</a>
+     </div></li>
+    <li class="mobile-nav-item"><a href="#platform" class="mobile-dropdown-toggle">Products <span class="dropdown-arrow">▼</span></a>
+     <div class="mobile-submenu"><a href="#cybershield-ai">CyberShield AI</a> <a href="#threateye">ThreatEye Platform</a> <a href="#secureedge">SecureEdge Gateway</a>
+     </div></li>
+    <li class="mobile-nav-item"><a href="#insights" class="mobile-dropdown-toggle">Insights <span class="dropdown-arrow">▼</span></a>
+     <div class="mobile-submenu"><a href="#threat-reports">Threat Reports</a> <a href="#security-blog">Security Blog</a> <a href="#research">Research Papers</a> <a href="#webinars">Webinars</a>
+     </div></li>
+    <li class="mobile-nav-item"><a href="#contact">Contact</a></li>
+   </ul>
+  </div><!-- Hero Section -->
+  <section class="hero">
+   <div class="hero-background">
+    <div class="grid-overlay"></div>
+    <div class="particles" id="particles-container"></div>
+   </div>
+   <div class="hero-content">
+    <h1 id="hero-headline">Next-Generation Cyber Defense Solutions</h1>
+    <p id="hero-subheadline">Empowering enterprises to detect, prevent, and respond to evolving cyber threats with AI-powered intelligence and real-time protection.</p>
+    <div class="hero-buttons"><button class="btn btn-primary">Explore Solutions</button> <button class="btn btn-secondary">Talk to an Expert</button>
+    </div>
+   </div>
+  </section><!-- About Section -->
+  <section id="about" class="about">
+   <div class="container">
+    <h2 class="section-title" id="about-headline">Your Trusted Partner in Cyber Defense</h2>
+    <p class="section-subtitle" id="about-text">We combine cutting-edge technology, threat intelligence, and decades of experience to protect organizations from modern cyber threats and ensure business continuity.</p>
+    <div class="stats">
+     <div class="stat-card">
+      <div class="stat-number">
+       15+
+      </div>
+      <div class="stat-label">
+       Years of Experience
+      </div>
+     </div>
+     <div class="stat-card">
+      <div class="stat-number">
+       24/7
+      </div>
+      <div class="stat-label">
+       Threat Monitoring
+      </div>
+     </div>
+     <div class="stat-card">
+      <div class="stat-number">
+       500+
+      </div>
+      <div class="stat-label">
+       Global Clients
+      </div>
+     </div>
+    </div>
+   </div>
+  </section><!-- Solutions Section -->
+  <section id="solutions" class="solutions">
+   <div class="container">
+    <h2 class="section-title" id="solutions-headline">Our Solutions</h2>
+    <p class="section-subtitle">Comprehensive cybersecurity solutions designed to protect your entire digital infrastructure</p>
+    <div class="solutions-grid">
+     <div class="solution-card">
+      <div class="solution-icon">
+       🛡️
+      </div>
+      <h3>Endpoint Protection</h3>
+      <p>Advanced threat detection and response for all endpoints with AI-powered behavioral analysis.</p>
+     </div>
+     <div class="solution-card">
+      <div class="solution-icon">
+       🌐
+      </div>
+      <h3>Network Security</h3>
+      <p>Real-time network monitoring and intrusion prevention to safeguard your infrastructure.</p>
+     </div>
+     <div class="solution-card">
+      <div class="solution-icon">
+       ☁️
+      </div>
+      <h3>Cloud Security</h3>
+      <p>Comprehensive cloud protection across multi-cloud and hybrid environments.</p>
+     </div>
+     <div class="solution-card">
+      <div class="solution-icon">
+       🔍
+      </div>
+      <h3>Threat Intelligence</h3>
+      <p>Proactive threat hunting and intelligence gathering to stay ahead of attackers.</p>
+     </div>
+     <div class="solution-card">
+      <div class="solution-icon">
+       ⚡
+      </div>
+      <h3>Managed Detection &amp; Response</h3>
+      <p>24/7 security operations center with expert analysts monitoring your environment.</p>
+     </div>
+     <div class="solution-card">
+      <div class="solution-icon">
+       🎯
+      </div>
+      <h3>Penetration Testing</h3>
+      <p>Ethical hacking and red team exercises to identify vulnerabilities before attackers do.</p>
+     </div>
+    </div>
+   </div>
+  </section><!-- Platform Section -->
+  <section id="platform" class="platform">
+   <div class="container">
+    <h2 class="section-title" id="platform-headline">AI-Powered Defense Platform</h2>
+    <p class="section-subtitle" id="platform-text">Our unified defense platform integrates AI, machine learning, and automation to detect and stop threats before they impact your business.</p>
+    <div class="platform-visual">
+     <div class="platform-icon">
+      🤖
+     </div>
+     <h3 style="color: #FFFFFF; margin-top: 1.5rem; font-size: 1.8rem;">Intelligent Threat Detection</h3>
+     <p style="color: #9CA3AF; margin-top: 1rem; max-width: 600px; margin-left: auto; margin-right: auto;">Leveraging advanced machine learning algorithms to identify and neutralize threats in real-time across your entire digital ecosystem.</p>
+    </div>
+   </div>
+  </section><!-- Partners Section -->
+  <section id="partners" class="partners">
+   <div class="container">
+    <h2 class="section-title" id="partners-headline">Trusted by Industry Leaders</h2>
+    <p class="section-subtitle">Partnering with the world's leading cybersecurity technology providers</p>
+    <div class="partners-grid">
+     <div class="partner-card">
+      <h4>Microsoft</h4>
+     </div>
+     <div class="partner-card">
+      <h4>Fortinet</h4>
+     </div>
+     <div class="partner-card">
+      <h4>Sophos</h4>
+     </div>
+     <div class="partner-card">
+      <h4>Palo Alto Networks</h4>
+     </div>
+    </div>
+   </div>
+  </section><!-- Insights Section -->
+  <section id="insights" class="insights">
+   <div class="container">
+    <h2 class="section-title" id="insights-headline">Cyber Insights</h2>
+    <p class="section-subtitle">Stay informed with the latest cybersecurity trends, research, and best practices</p>
+    <div class="insights-grid">
+     <div class="insight-card">
+      <div class="insight-image">
+       📊
+      </div>
+      <div class="insight-content">
+       <h3>2024 Threat Landscape Report</h3>
+       <p>Comprehensive analysis of emerging cyber threats and attack vectors targeting enterprises worldwide.</p>
+       <div class="insight-date">
+        March 15, 2024
+       </div>
+      </div>
+     </div>
+     <div class="insight-card">
+      <div class="insight-image">
+       🔐
+      </div>
+      <div class="insight-content">
+       <h3>Zero Trust Architecture Guide</h3>
+       <p>Best practices for implementing zero trust security models in modern enterprise environments.</p>
+       <div class="insight-date">
+        March 10, 2024
+       </div>
+      </div>
+     </div>
+     <div class="insight-card">
+      <div class="insight-image">
+       🚨
+      </div>
+      <div class="insight-content">
+       <h3>Ransomware Defense Strategies</h3>
+       <p>Proven techniques to prevent, detect, and respond to ransomware attacks before they cause damage.</p>
+       <div class="insight-date">
+        March 5, 2024
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </section><!-- Contact Section -->
+  <section id="contact" class="contact">
+   <div class="container">
+    <h2 class="section-title" id="contact-headline">Let's Strengthen Your Cyber Defense</h2>
+    <p class="section-subtitle">Get in touch with our security experts to discuss your cybersecurity needs</p>
+    <form class="contact-form" id="contact-form">
+     <div class="form-group"><label for="name">Name</label> <input type="text" id="name" name="name" required>
+     </div>
+     <div class="form-group"><label for="email">Email</label> <input type="email" id="email" name="email" required>
+     </div>
+     <div class="form-group"><label for="company">Company</label> <input type="text" id="company" name="company" required>
+     </div>
+     <div class="form-group"><label for="message">Message</label> <textarea id="message" name="message" required></textarea>
+     </div>
+     <div class="form-buttons"><button type="submit" class="btn btn-primary">Request a Demo</button> <button type="button" class="btn btn-secondary">Contact Us</button>
+     </div>
+    </form>
+   </div>
+  </section><!-- Footer -->
+  <footer>
+   <div class="container">
+    <div class="footer-links"><a href="#about">About</a> <a href="#solutions">Solutions</a> <a href="#platform">Platform</a> <a href="#insights">Insights</a> <a href="#contact">Contact</a>
+    </div>
+    <div class="footer-content">
+     <p>© 2024 <span id="footer-company-name">CyberShield Defense</span>. All rights reserved.</p>
+    </div>
+   </div>
+  </footer>
+  <script>
+    const defaultConfig = {
+      background_color: '#0A0A0F',
+      surface_color: '#111827',
+      text_color: '#E5E7EB',
+      primary_action_color: '#7C3AED',
+      secondary_action_color: '#22D3EE',
+      font_family: 'Space Grotesk',
+      font_size: 16,
+      hero_headline: 'Next-Generation Cyber Defense Solutions',
+      hero_subheadline: 'Empowering enterprises to detect, prevent, and respond to evolving cyber threats with AI-powered intelligence and real-time protection.',
+      company_name: 'CyberShield Defense',
+      about_headline: 'Your Trusted Partner in Cyber Defense',
+      about_text: 'We combine cutting-edge technology, threat intelligence, and decades of experience to protect organizations from modern cyber threats and ensure business continuity.',
+      solutions_headline: 'Our Solutions',
+      platform_headline: 'AI-Powered Defense Platform',
+      platform_text: 'Our unified defense platform integrates AI, machine learning, and automation to detect and stop threats before they impact your business.',
+      partners_headline: 'Trusted by Industry Leaders',
+      insights_headline: 'Cyber Insights',
+      contact_headline: "Let's Strengthen Your Cyber Defense"
+    };
+
+    async function onConfigChange(config) {
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'sans-serif';
+      const fontFamily = `${customFont}, ${baseFontStack}`;
+
+      document.body.style.fontFamily = fontFamily;
+      document.body.style.fontSize = `${baseSize}px`;
+      document.body.style.background = `linear-gradient(180deg, ${config.background_color || defaultConfig.background_color} 0%, ${config.surface_color || defaultConfig.surface_color} 100%)`;
+      document.body.style.color = config.text_color || defaultConfig.text_color;
+
+      const heroHeadline = document.getElementById('hero-headline');
+      if (heroHeadline) {
+        heroHeadline.textContent = config.hero_headline || defaultConfig.hero_headline;
+        heroHeadline.style.fontSize = `${baseSize * 2.5}px`;
+        heroHeadline.style.fontFamily = fontFamily;
+      }
+
+      const heroSubheadline = document.getElementById('hero-subheadline');
+      if (heroSubheadline) {
+        heroSubheadline.textContent = config.hero_subheadline || defaultConfig.hero_subheadline;
+        heroSubheadline.style.fontSize = `${baseSize * 1.3}px`;
+        heroSubheadline.style.fontFamily = fontFamily;
+        heroSubheadline.style.color = config.text_color || defaultConfig.text_color;
+      }
+
+      const companyName = document.getElementById('company-name');
+      if (companyName) {
+        companyName.textContent = config.company_name || defaultConfig.company_name;
+        companyName.style.fontSize = `${baseSize * 1.5}px`;
+        companyName.style.fontFamily = fontFamily;
+      }
+
+      const footerCompanyName = document.getElementById('footer-company-name');
+      if (footerCompanyName) {
+        footerCompanyName.textContent = config.company_name || defaultConfig.company_name;
+      }
+
+      const aboutHeadline = document.getElementById('about-headline');
+      if (aboutHeadline) {
+        aboutHeadline.textContent = config.about_headline || defaultConfig.about_headline;
+        aboutHeadline.style.fontSize = `${baseSize * 3}px`;
+        aboutHeadline.style.fontFamily = fontFamily;
+      }
+
+      const aboutText = document.getElementById('about-text');
+      if (aboutText) {
+        aboutText.textContent = config.about_text || defaultConfig.about_text;
+        aboutText.style.fontSize = `${baseSize * 1.2}px`;
+        aboutText.style.fontFamily = fontFamily;
+        aboutText.style.color = config.text_color || defaultConfig.text_color;
+      }
+
+      const solutionsHeadline = document.getElementById('solutions-headline');
+      if (solutionsHeadline) {
+        solutionsHeadline.textContent = config.solutions_headline || defaultConfig.solutions_headline;
+        solutionsHeadline.style.fontSize = `${baseSize * 3}px`;
+        solutionsHeadline.style.fontFamily = fontFamily;
+      }
+
+      const platformHeadline = document.getElementById('platform-headline');
+      if (platformHeadline) {
+        platformHeadline.textContent = config.platform_headline || defaultConfig.platform_headline;
+        platformHeadline.style.fontSize = `${baseSize * 3}px`;
+        platformHeadline.style.fontFamily = fontFamily;
+      }
+
+      const platformText = document.getElementById('platform-text');
+      if (platformText) {
+        platformText.textContent = config.platform_text || defaultConfig.platform_text;
+        platformText.style.fontSize = `${baseSize * 1.2}px`;
+        platformText.style.fontFamily = fontFamily;
+        platformText.style.color = config.text_color || defaultConfig.text_color;
+      }
+
+      const partnersHeadline = document.getElementById('partners-headline');
+      if (partnersHeadline) {
+        partnersHeadline.textContent = config.partners_headline || defaultConfig.partners_headline;
+        partnersHeadline.style.fontSize = `${baseSize * 3}px`;
+        partnersHeadline.style.fontFamily = fontFamily;
+      }
+
+      const insightsHeadline = document.getElementById('insights-headline');
+      if (insightsHeadline) {
+        insightsHeadline.textContent = config.insights_headline || defaultConfig.insights_headline;
+        insightsHeadline.style.fontSize = `${baseSize * 3}px`;
+        insightsHeadline.style.fontFamily = fontFamily;
+      }
+
+      const contactHeadline = document.getElementById('contact-headline');
+      if (contactHeadline) {
+        contactHeadline.textContent = config.contact_headline || defaultConfig.contact_headline;
+        contactHeadline.style.fontSize = `${baseSize * 3}px`;
+        contactHeadline.style.fontFamily = fontFamily;
+      }
+
+      const primaryButtons = document.querySelectorAll('.btn-primary');
+      primaryButtons.forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${config.primary_action_color || defaultConfig.primary_action_color} 0%, ${config.secondary_action_color || defaultConfig.secondary_action_color} 100%)`;
+        btn.style.fontSize = `${baseSize}px`;
+        btn.style.fontFamily = fontFamily;
+      });
+
+      const secondaryButtons = document.querySelectorAll('.btn-secondary');
+      secondaryButtons.forEach(btn => {
+        btn.style.color = config.secondary_action_color || defaultConfig.secondary_action_color;
+        btn.style.borderColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+        btn.style.fontSize = `${baseSize}px`;
+        btn.style.fontFamily = fontFamily;
+      });
+
+      const navLinks = document.querySelectorAll('.nav-links a');
+      navLinks.forEach(link => {
+        link.style.color = config.text_color || defaultConfig.text_color;
+        link.style.fontSize = `${baseSize}px`;
+        link.style.fontFamily = fontFamily;
+      });
+
+      const sectionTitles = document.querySelectorAll('.section-title');
+      sectionTitles.forEach(title => {
+        title.style.fontSize = `${baseSize * 3}px`;
+        title.style.fontFamily = fontFamily;
+      });
+
+      const sectionSubtitles = document.querySelectorAll('.section-subtitle');
+      sectionSubtitles.forEach(subtitle => {
+        subtitle.style.fontSize = `${baseSize * 1.2}px`;
+        subtitle.style.fontFamily = fontFamily;
+        subtitle.style.color = config.text_color || defaultConfig.text_color;
+      });
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => {
+                config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (value) => {
+                config.primary_action_color = value;
+                window.elementSdk.setConfig({ primary_action_color: value });
+              }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (value) => {
+                config.secondary_action_color = value;
+                window.elementSdk.setConfig({ secondary_action_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['hero_headline', config.hero_headline || defaultConfig.hero_headline],
+          ['hero_subheadline', config.hero_subheadline || defaultConfig.hero_subheadline],
+          ['company_name', config.company_name || defaultConfig.company_name],
+          ['about_headline', config.about_headline || defaultConfig.about_headline],
+          ['about_text', config.about_text || defaultConfig.about_text],
+          ['solutions_headline', config.solutions_headline || defaultConfig.solutions_headline],
+          ['platform_headline', config.platform_headline || defaultConfig.platform_headline],
+          ['platform_text', config.platform_text || defaultConfig.platform_text],
+          ['partners_headline', config.partners_headline || defaultConfig.partners_headline],
+          ['insights_headline', config.insights_headline || defaultConfig.insights_headline],
+          ['contact_headline', config.contact_headline || defaultConfig.contact_headline]
+        ])
+      });
+    }
+
+    function createParticles() {
+      const container = document.getElementById('particles-container');
+      for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+        container.appendChild(particle);
+      }
+    }
+
+    const contactForm = document.getElementById('contact-form');
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(contactForm);
+      const data = Object.fromEntries(formData);
+      console.log('Form submitted:', data);
+      contactForm.reset();
+    });
+
+    // Mobile Menu Functionality
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileOverlay = document.getElementById('mobile-overlay');
+    const mobileClose = document.getElementById('mobile-close');
+    const mobileDropdownToggles = document.querySelectorAll('.mobile-dropdown-toggle');
+
+    function openMobileMenu() {
+      mobileMenu.classList.add('active');
+      mobileOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('active');
+      mobileOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+      // Close all submenus
+      document.querySelectorAll('.mobile-submenu').forEach(submenu => {
+        submenu.classList.remove('active');
+      });
+    }
+
+    mobileToggle.addEventListener('click', openMobileMenu);
+    mobileClose.addEventListener('click', closeMobileMenu);
+    mobileOverlay.addEventListener('click', closeMobileMenu);
+
+    // Mobile dropdown functionality
+    mobileDropdownToggles.forEach(toggle => {
+      toggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        const submenu = toggle.nextElementSibling;
+        const arrow = toggle.querySelector('.dropdown-arrow');
+        
+        if (submenu.classList.contains('active')) {
+          submenu.classList.remove('active');
+          arrow.style.transform = 'rotate(0deg)';
+        } else {
+          // Close other submenus
+          document.querySelectorAll('.mobile-submenu').forEach(otherSubmenu => {
+            if (otherSubmenu !== submenu) {
+              otherSubmenu.classList.remove('active');
+            }
+          });
+          document.querySelectorAll('.mobile-dropdown-toggle .dropdown-arrow').forEach(otherArrow => {
+            if (otherArrow !== arrow) {
+              otherArrow.style.transform = 'rotate(0deg)';
+            }
+          });
+          
+          submenu.classList.add('active');
+          arrow.style.transform = 'rotate(180deg)';
+        }
+      });
+    });
+
+    // Close mobile menu when clicking on links
+    document.querySelectorAll('.mobile-menu a:not(.mobile-dropdown-toggle)').forEach(link => {
+      link.addEventListener('click', closeMobileMenu);
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const offsetTop = target.offsetTop - 80; // Account for fixed nav
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    createParticles();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'996c3c04d1524b65',t:'MTc2MTg0MTE2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="th">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบจัดซื้อจัดจ้าง - Cyber Defense &amp; IT Security</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Prompt', sans-serif;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563EB 0%, #8B5CF6 100%);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .sidebar {
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-100%);
+    }
+
+    @media (min-width: 768px) {
+      .sidebar {
+        transform: translateX(0) !important;
+      }
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.375rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .status-pending {
+      background-color: #FEF3C7;
+      color: #92400E;
+    }
+
+    .status-approved {
+      background-color: #D1FAE5;
+      color: #065F46;
+    }
+
+    .status-rejected {
+      background-color: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .floating-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 50;
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 1rem;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+    }
+
+    .toast {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      display: none;
+      z-index: 200;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast.active {
+      display: block;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      display: inline-block;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="bg-gray-50"><!-- Header -->
+  <header class="bg-white shadow-md sticky top-0 z-40">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+     <div class="flex items-center space-x-4"><button id="menuBtn" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+       <svg class="icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+       </svg></button>
+      <div class="flex items-center space-x-3">
+       <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+        <svg class="icon text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+        </svg>
+       </div>
+       <h1 id="systemTitle" class="text-xl font-semibold text-gray-800">ตัวอย่างระบบจัดซื้อจัดจ้าง</h1>
+      </div>
+     </div>
+     <div class="flex items-center space-x-4"><button class="p-2 rounded-lg hover:bg-gray-100 relative">
+       <svg class="icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+       </svg><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span> </button> <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+       <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+        A
+       </div></button>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="flex"><!-- Sidebar -->
+   <aside id="sidebar" class="sidebar fixed md:static inset-y-0 left-0 w-64 bg-white shadow-lg z-30 mt-16 md:mt-0">
+    <nav class="p-4 space-y-2"><a href="#" onclick="showView('dashboard'); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-blue-50 text-blue-600 font-medium">
+      <svg class="icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+      </svg><span>Dashboard</span> </a> <a href="#" onclick="showView('requests'); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-50 text-gray-700">
+      <svg class="icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+      </svg><span>รายการคำขอ</span> </a> <a href="#" onclick="showView('form'); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-50 text-gray-700">
+      <svg class="icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg><span>ขออนุมัติใหม่</span> </a>
+    </nav>
+   </aside><!-- Main Content -->
+   <main class="flex-1 p-4 md:p-8"><!-- Dashboard View -->
+    <div id="dashboardView" class="view-content"><!-- Announcement -->
+     <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 mb-8 text-white">
+      <div class="flex items-start space-x-4">
+       <svg class="icon flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+       </svg>
+       <div>
+        <h3 class="font-semibold text-lg mb-1">ประกาศ</h3>
+        <p id="announcementText" class="text-blue-50">ตัวอย่างประกาศระบบ Procurement</p>
+       </div>
+      </div>
+     </div><!-- Stats Cards -->
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+       <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+         <svg class="icon text-yellow-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+         </svg>
+        </div><span class="text-3xl font-bold text-gray-800">3</span>
+       </div>
+       <h3 class="text-gray-600 font-medium">รอดำเนินการ</h3>
+      </div>
+      <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+       <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+         <svg class="icon text-green-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+         </svg>
+        </div><span class="text-3xl font-bold text-gray-800">2</span>
+       </div>
+       <h3 class="text-gray-600 font-medium">อนุมัติแล้ว</h3>
+      </div>
+      <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+       <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+         <svg class="icon text-red-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+         </svg>
+        </div><span class="text-3xl font-bold text-gray-800">1</span>
+       </div>
+       <h3 class="text-gray-600 font-medium">ปฏิเสธ</h3>
+      </div>
+     </div><!-- Quick Actions -->
+     <div class="bg-white rounded-xl p-6 shadow-md mb-8">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">การดำเนินการด่วน</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><button onclick="showView('form')" class="btn-primary text-white px-6 py-4 rounded-lg font-medium flex items-center justify-center space-x-2">
+        <svg class="icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg><span>ขออนุมัติใหม่</span> </button> <button onclick="showView('requests')" class="bg-white border-2 border-blue-600 text-blue-600 px-6 py-4 rounded-lg font-medium hover:bg-blue-50 transition flex items-center justify-center space-x-2">
+        <svg class="icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg><span>ดูรายการคำขอ</span> </button>
+      </div>
+     </div><!-- Recent Requests -->
+     <div class="bg-white rounded-xl p-6 shadow-md">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">คำขอล่าสุด</h2>
+      <div class="space-y-4">
+       <div class="border-l-4 border-yellow-500 pl-4 py-2">
+        <div class="flex justify-between items-start mb-2">
+         <h3 class="font-semibold text-gray-800">Firewall Hardware Upgrade</h3><span class="status-badge status-pending">รอดำเนินการ</span>
+        </div>
+        <p class="text-sm text-gray-600">Req003 • 15 ม.ค. 2568</p>
+       </div>
+       <div class="border-l-4 border-green-500 pl-4 py-2">
+        <div class="flex justify-between items-start mb-2">
+         <h3 class="font-semibold text-gray-800">Security Monitoring Software</h3><span class="status-badge status-approved">อนุมัติแล้ว</span>
+        </div>
+        <p class="text-sm text-gray-600">Req002 • 12 ม.ค. 2568</p>
+       </div>
+       <div class="border-l-4 border-yellow-500 pl-4 py-2">
+        <div class="flex justify-between items-start mb-2">
+         <h3 class="font-semibold text-gray-800">Network Security Assessment</h3><span class="status-badge status-pending">รอดำเนินการ</span>
+        </div>
+        <p class="text-sm text-gray-600">Req001 • 10 ม.ค. 2568</p>
+       </div>
+      </div>
+     </div>
+    </div><!-- Requests View -->
+    <div id="requestsView" class="view-content hidden">
+     <div class="bg-white rounded-xl p-6 shadow-md mb-6">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-6">รายการคำขอทั้งหมด</h2><!-- Filters -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"><input type="text" placeholder="ค้นหาคำขอ..." class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"> <select class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"> <option>ทุกสถานะ</option> <option>รอดำเนินการ</option> <option>อนุมัติแล้ว</option> <option>ปฏิเสธ</option> </select>
+      </div><!-- Requests Table (Desktop) -->
+      <div class="hidden md:block overflow-x-auto">
+       <table class="w-full">
+        <thead class="bg-gray-50">
+         <tr>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">หมายเลขคำขอ</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">รายการ</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">จำนวน</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">วันที่</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">สถานะ</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">การดำเนินการ</th>
+         </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+         <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">Req005</td>
+          <td class="px-6 py-4 text-sm text-gray-600">Endpoint Protection Suite</td>
+          <td class="px-6 py-4 text-sm text-gray-600">50 Licenses</td>
+          <td class="px-6 py-4 text-sm text-gray-600">18 ม.ค. 2568</td>
+          <td class="px-6 py-4"><span class="status-badge status-pending">รอดำเนินการ</span></td>
+          <td class="px-6 py-4"><button onclick="showRequestDetail('Req005')" class="text-blue-600 hover:text-blue-800 font-medium text-sm">ดูรายละเอียด</button></td>
+         </tr>
+         <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">Req004</td>
+          <td class="px-6 py-4 text-sm text-gray-600">Penetration Testing Service</td>
+          <td class="px-6 py-4 text-sm text-gray-600">1 Project</td>
+          <td class="px-6 py-4 text-sm text-gray-600">16 ม.ค. 2568</td>
+          <td class="px-6 py-4"><span class="status-badge status-approved">อนุมัติแล้ว</span></td>
+          <td class="px-6 py-4"><button onclick="showRequestDetail('Req004')" class="text-blue-600 hover:text-blue-800 font-medium text-sm">ดูรายละเอียด</button></td>
+         </tr>
+         <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">Req003</td>
+          <td class="px-6 py-4 text-sm text-gray-600">Firewall Hardware Upgrade</td>
+          <td class="px-6 py-4 text-sm text-gray-600">2 Units</td>
+          <td class="px-6 py-4 text-sm text-gray-600">15 ม.ค. 2568</td>
+          <td class="px-6 py-4"><span class="status-badge status-pending">รอดำเนินการ</span></td>
+          <td class="px-6 py-4"><button onclick="showRequestDetail('Req003')" class="text-blue-600 hover:text-blue-800 font-medium text-sm">ดูรายละเอียด</button></td>
+         </tr>
+         <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">Req002</td>
+          <td class="px-6 py-4 text-sm text-gray-600">Security Monitoring Software</td>
+          <td class="px-6 py-4 text-sm text-gray-600">1 License</td>
+          <td class="px-6 py-4 text-sm text-gray-600">12 ม.ค. 2568</td>
+          <td class="px-6 py-4"><span class="status-badge status-approved">อนุมัติแล้ว</span></td>
+          <td class="px-6 py-4"><button onclick="showRequestDetail('Req002')" class="text-blue-600 hover:text-blue-800 font-medium text-sm">ดูรายละเอียด</button></td>
+         </tr>
+         <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">Req001</td>
+          <td class="px-6 py-4 text-sm text-gray-600">Network Security Assessment</td>
+          <td class="px-6 py-4 text-sm text-gray-600">1 Service</td>
+          <td class="px-6 py-4 text-sm text-gray-600">10 ม.ค. 2568</td>
+          <td class="px-6 py-4"><span class="status-badge status-rejected">ปฏิเสธ</span></td>
+          <td class="px-6 py-4"><button onclick="showRequestDetail('Req001')" class="text-blue-600 hover:text-blue-800 font-medium text-sm">ดูรายละเอียด</button></td>
+         </tr>
+        </tbody>
+       </table>
+      </div><!-- Requests Cards (Mobile) -->
+      <div class="md:hidden space-y-4">
+       <div class="border border-gray-200 rounded-lg p-4">
+        <div class="flex justify-between items-start mb-3">
+         <h3 class="font-semibold text-gray-800">Req005</h3><span class="status-badge status-pending">รอดำเนินการ</span>
+        </div>
+        <p class="text-sm text-gray-600 mb-2">Endpoint Protection Suite</p>
+        <p class="text-sm text-gray-500 mb-3">50 Licenses • 18 ม.ค. 2568</p><button onclick="showRequestDetail('Req005')" class="text-blue-600 hover:text-blue-800 font-medium text-sm">ดูรายละเอียด →</button>
+       </div>
+       <div class="border border-gray-200 rounded-lg p-4">
+        <div class="flex justify-between items-start mb-3">
+         <h3 class="font-semibold text-gray-800">Req004</h3><span class="status-badge status-approved">อนุมัติแล้ว</span>
+        </div>
+        <p class="text-sm text-gray-600 mb-2">Penetration Testing Service</p>
+        <p class="text-sm text-gray-500 mb-3">1 Project • 16 ม.ค. 2568</p><button onclick="showRequestDetail('Req004')" class="text-blue-600 hover:text-blue-800 font-medium text-sm">ดูรายละเอียด →</button>
+       </div>
+       <div class="border border-gray-200 rounded-lg p-4">
+        <div class="flex justify-between items-start mb-3">
+         <h3 class="font-semibold text-gray-800">Req003</h3><span class="status-badge status-pending">รอดำเนินการ</span>
+        </div>
+        <p class="text-sm text-gray-600 mb-2">Firewall Hardware Upgrade</p>
+        <p class="text-sm text-gray-500 mb-3">2 Units • 15 ม.ค. 2568</p><button onclick="showRequestDetail('Req003')" class="text-blue-600 hover:text-blue-800 font-medium text-sm">ดูรายละเอียด →</button>
+       </div>
+       <div class="border border-gray-200 rounded-lg p-4">
+        <div class="flex justify-between items-start mb-3">
+         <h3 class="font-semibold text-gray-800">Req002</h3><span class="status-badge status-approved">อนุมัติแล้ว</span>
+        </div>
+        <p class="text-sm text-gray-600 mb-2">Security Monitoring Software</p>
+        <p class="text-sm text-gray-500 mb-3">1 License • 12 ม.ค. 2568</p><button onclick="showRequestDetail('Req002')" class="text-blue-600 hover:text-blue-800 font-medium text-sm">ดูรายละเอียด →</button>
+       </div>
+       <div class="border border-gray-200 rounded-lg p-4">
+        <div class="flex justify-between items-start mb-3">
+         <h3 class="font-semibold text-gray-800">Req001</h3><span class="status-badge status-rejected">ปฏิเสธ</span>
+        </div>
+        <p class="text-sm text-gray-600 mb-2">Network Security Assessment</p>
+        <p class="text-sm text-gray-500 mb-3">1 Service • 10 ม.ค. 2568</p><button onclick="showRequestDetail('Req001')" class="text-blue-600 hover:text-blue-800 font-medium text-sm">ดูรายละเอียด →</button>
+       </div>
+      </div>
+     </div>
+    </div><!-- Form View -->
+    <div id="formView" class="view-content hidden">
+     <div class="bg-white rounded-xl p-6 md:p-8 shadow-md max-w-3xl mx-auto">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-6">ฟอร์มขออนุมัติ / จัดซื้อ</h2>
+      <form id="requestForm" onsubmit="handleSubmit(event)">
+       <div class="space-y-6">
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">ประเภทคำขอ</label> <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"> <option>ขออนุมัติ</option> <option>ขอจัดซื้อ</option> </select>
+        </div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">ชื่อผู้ขอ (ตัวอย่าง)</label> <input type="text" value="ผู้ใช้งาน A" readonly class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50">
+        </div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">รายการที่ต้องการ</label> <input type="text" placeholder="เช่น Security Software License" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">จำนวน</label> <input type="text" placeholder="เช่น 10 Licenses" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">หมายเหตุ</label> <textarea rows="4" placeholder="รายละเอียดเพิ่มเติม..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">วันที่</label> <input type="date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">เวลา</label> <input type="time" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+         </div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4 pt-4"><button type="submit" class="btn-primary text-white px-8 py-3 rounded-lg font-medium flex-1"> ส่งตัวอย่าง </button> <button type="button" onclick="showView('dashboard')" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-300 transition flex-1"> ยกเลิก </button>
+        </div>
+       </div>
+      </form>
+     </div>
+    </div>
+   </main>
+  </div><!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 mt-12">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+     <div>
+      <h3 class="font-semibold text-gray-800 mb-3">ติดต่อฝ่าย Procurement</h3>
+      <div class="space-y-2 text-sm text-gray-600">
+       <p class="flex items-center space-x-2">
+        <svg class="icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg><span id="contactEmail">support@example.com</span></p>
+       <p class="flex items-center space-x-2">
+        <svg class="icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+        </svg><span id="contactPhone">0xx-xxx-xxxx</span></p>
+      </div>
+     </div>
+     <div>
+      <h3 class="font-semibold text-gray-800 mb-3">เวลาทำการ</h3>
+      <p id="workingHours" class="text-sm text-gray-600">จันทร์–ศุกร์ 08:30–17:30</p>
+     </div>
+     <div>
+      <h3 class="font-semibold text-gray-800 mb-3">เกี่ยวกับระบบ</h3>
+      <p class="text-sm text-gray-600">ระบบจัดซื้อจัดจ้างสำหรับองค์กร Cyber Defense และ IT Security (ตัวอย่าง)</p>
+     </div>
+    </div>
+    <div class="mt-8 pt-8 border-t border-gray-200 text-center">
+     <div class="h-1 w-32 mx-auto gradient-bg rounded-full mb-4"></div>
+     <p class="text-sm text-gray-500">© 2568 Procurement System Demo. All rights reserved.</p>
+    </div>
+   </div>
+  </footer><!-- Floating Action Button (Mobile) --> <button onclick="showView('form')" class="floating-btn md:hidden btn-primary text-white w-14 h-14 rounded-full flex items-center justify-center">
+   <svg class="icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+   </svg></button> <!-- Request Detail Modal -->
+  <div id="requestModal" class="modal">
+   <div class="modal-content">
+    <div class="p-6">
+     <div class="flex justify-between items-start mb-6">
+      <h2 class="text-2xl font-semibold text-gray-800">รายละเอียดคำขอ</h2><button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+       <svg class="icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+       </svg></button>
+     </div>
+     <div id="modalContent" class="space-y-4"><!-- Content will be populated by JavaScript -->
+     </div>
+     <div class="mt-6"><label class="block text-sm font-medium text-gray-700 mb-2">เพิ่มหมายเหตุ</label> <textarea rows="3" placeholder="หมายเหตุเพิ่มเติม..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea> <button class="mt-3 btn-primary text-white px-6 py-2 rounded-lg font-medium">บันทึกหมายเหตุ</button>
+     </div>
+    </div>
+   </div>
+  </div><!-- Toast Notification -->
+  <div id="toast" class="toast">
+   <div class="flex items-center space-x-3">
+    <svg class="icon text-green-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg><span id="toastMessage" class="font-medium text-gray-800"></span>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      system_title: "ตัวอย่างระบบจัดซื้อจัดจ้าง",
+      announcement_text: "ตัวอย่างประกาศระบบ Procurement",
+      contact_email: "support@example.com",
+      contact_phone: "0xx-xxx-xxxx",
+      working_hours: "จันทร์–ศุกร์ 08:30–17:30",
+      background_color: "#F8FAFC",
+      primary_color: "#2563EB",
+      secondary_color: "#8B5CF6",
+      text_color: "#1F2937",
+      surface_color: "#FFFFFF"
+    };
+
+    const requestData = {
+      'Req005': {
+        id: 'Req005',
+        title: 'Endpoint Protection Suite',
+        quantity: '50 Licenses',
+        date: '18 ม.ค. 2568',
+        status: 'pending',
+        requester: 'ผู้ใช้งาน A',
+        notes: 'ต้องการ Endpoint Protection สำหรับพนักงานใหม่ 50 คน',
+        approverNotes: 'อยู่ระหว่างการพิจารณา'
+      },
+      'Req004': {
+        id: 'Req004',
+        title: 'Penetration Testing Service',
+        quantity: '1 Project',
+        date: '16 ม.ค. 2568',
+        status: 'approved',
+        requester: 'ผู้ใช้งาน B',
+        notes: 'ทดสอบความปลอดภัยระบบประจำปี',
+        approverNotes: 'อนุมัติแล้ว งบประมาณ 150,000 บาท'
+      },
+      'Req003': {
+        id: 'Req003',
+        title: 'Firewall Hardware Upgrade',
+        quantity: '2 Units',
+        date: '15 ม.ค. 2568',
+        status: 'pending',
+        requester: 'ผู้ใช้งาน C',
+        notes: 'อัพเกรด Firewall สำหรับ Data Center',
+        approverNotes: 'รอการพิจารณาจากผู้บริหาร'
+      },
+      'Req002': {
+        id: 'Req002',
+        title: 'Security Monitoring Software',
+        quantity: '1 License',
+        date: '12 ม.ค. 2568',
+        status: 'approved',
+        requester: 'ผู้ใช้งาน A',
+        notes: 'ซอฟต์แวร์ตรวจสอบความปลอดภัยแบบ Real-time',
+        approverNotes: 'อนุมัติแล้ว ดำเนินการจัดซื้อได้'
+      },
+      'Req001': {
+        id: 'Req001',
+        title: 'Network Security Assessment',
+        quantity: '1 Service',
+        date: '10 ม.ค. 2568',
+        status: 'rejected',
+        requester: 'ผู้ใช้งาน D',
+        notes: 'ประเมินความปลอดภัยเครือข่าย',
+        approverNotes: 'ปฏิเสธ - งบประมาณไม่เพียงพอในไตรมาสนี้'
+      }
+    };
+
+    function showView(viewName) {
+      document.querySelectorAll('.view-content').forEach(view => {
+        view.classList.add('hidden');
+      });
+      
+      if (viewName === 'dashboard') {
+        document.getElementById('dashboardView').classList.remove('hidden');
+      } else if (viewName === 'requests') {
+        document.getElementById('requestsView').classList.remove('hidden');
+      } else if (viewName === 'form') {
+        document.getElementById('formView').classList.remove('hidden');
+      }
+
+      if (window.innerWidth < 768) {
+        document.getElementById('sidebar').classList.add('hidden');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showRequestDetail(requestId) {
+      const request = requestData[requestId];
+      if (!request) return;
+
+      const statusClass = request.status === 'pending' ? 'status-pending' : 
+                         request.status === 'approved' ? 'status-approved' : 'status-rejected';
+      const statusText = request.status === 'pending' ? 'รอดำเนินการ' : 
+                        request.status === 'approved' ? 'อนุมัติแล้ว' : 'ปฏิเสธ';
+
+      const modalContent = document.getElementById('modalContent');
+      modalContent.innerHTML = `
+        <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-sm text-gray-600">หมายเลขคำขอ</p>
+              <p class="font-semibold text-gray-800">${request.id}</p>
+            </div>
+            <span class="status-badge ${statusClass}">${statusText}</span>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">ผู้ขอ</p>
+            <p class="font-medium text-gray-800">${request.requester}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">รายการ</p>
+            <p class="font-medium text-gray-800">${request.title}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">จำนวน</p>
+            <p class="font-medium text-gray-800">${request.quantity}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">วันที่</p>
+            <p class="font-medium text-gray-800">${request.date}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">หมายเหตุจากผู้ขอ</p>
+            <p class="font-medium text-gray-800">${request.notes}</p>
+          </div>
+          <div class="pt-3 border-t border-gray-200">
+            <p class="text-sm text-gray-600">หมายเหตุจากผู้อนุมัติ</p>
+            <p class="font-medium text-gray-800">${request.approverNotes}</p>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('requestModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('requestModal').classList.remove('active');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      toastMessage.textContent = message;
+      toast.classList.add('active');
+      
+      setTimeout(() => {
+        toast.classList.remove('active');
+      }, 3000);
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      showToast('คำขอถูกบันทึกเรียบร้อย (ตัวอย่าง)');
+      setTimeout(() => {
+        document.getElementById('requestForm').reset();
+        showView('dashboard');
+      }, 1500);
+    }
+
+    document.getElementById('menuBtn').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('hidden');
+    });
+
+    document.getElementById('requestModal').addEventListener('click', (e) => {
+      if (e.target.id === 'requestModal') {
+        closeModal();
+      }
+    });
+
+    async function onConfigChange(config) {
+      const systemTitle = document.getElementById('systemTitle');
+      const announcementText = document.getElementById('announcementText');
+      const contactEmail = document.getElementById('contactEmail');
+      const contactPhone = document.getElementById('contactPhone');
+      const workingHours = document.getElementById('workingHours');
+
+      systemTitle.textContent = config.system_title || defaultConfig.system_title;
+      announcementText.textContent = config.announcement_text || defaultConfig.announcement_text;
+      contactEmail.textContent = config.contact_email || defaultConfig.contact_email;
+      contactPhone.textContent = config.contact_phone || defaultConfig.contact_phone;
+      workingHours.textContent = config.working_hours || defaultConfig.working_hours;
+
+      document.body.style.backgroundColor = config.background_color || defaultConfig.background_color;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig: defaultConfig,
+        onConfigChange: onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => {
+                config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_color || defaultConfig.primary_color,
+              set: (value) => {
+                config.primary_color = value;
+                window.elementSdk.setConfig({ primary_color: value });
+              }
+            },
+            {
+              get: () => config.secondary_color || defaultConfig.secondary_color,
+              set: (value) => {
+                config.secondary_color = value;
+                window.elementSdk.setConfig({ secondary_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["system_title", config.system_title || defaultConfig.system_title],
+          ["announcement_text", config.announcement_text || defaultConfig.announcement_text],
+          ["contact_email", config.contact_email || defaultConfig.contact_email],
+          ["contact_phone", config.contact_phone || defaultConfig.contact_phone],
+          ["working_hours", config.working_hours || defaultConfig.working_hours]
+        ])
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'996c9c99c0784b65',t:'MTc2MTg0NTEyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

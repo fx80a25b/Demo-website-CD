@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="th">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Portal Hub | หน้ารวมเว็บไซต์ขององค์กร</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Prompt', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+      min-height: 100%;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Header */
+    .header {
+      background: #FFFFFF;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .header-text h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #1E3A8A;
+      font-weight: 600;
+    }
+
+    .header-text p {
+      margin: 0.25rem 0 0 0;
+      font-size: 0.9rem;
+      color: #64748b;
+      font-weight: 300;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+      color: #FFFFFF;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      margin: 0 0 1rem 0;
+      font-weight: 600;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin: 0 0 2rem 0;
+      opacity: 0.95;
+      font-weight: 300;
+    }
+
+    /* Search Bar */
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1rem 1rem 1rem 3rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-family: 'Prompt', sans-serif;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 1.2rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      color: #1E3A8A;
+      margin: 0 0 2rem 0;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Portal Grid */
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .portal-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .portal-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      border-color: #10B981;
+    }
+
+    .portal-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .portal-card h3 {
+      font-size: 1.3rem;
+      color: #1E3A8A;
+      margin: 0 0 0.75rem 0;
+      font-weight: 600;
+    }
+
+    .portal-card p {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin: 0 0 1.5rem 0;
+      line-height: 1.6;
+      flex-grow: 1;
+      font-weight: 300;
+    }
+
+    .portal-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-family: 'Prompt', sans-serif;
+      text-align: center;
+    }
+
+    .portal-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      color: #64748b;
+      font-size: 1.1rem;
+      display: none;
+    }
+
+    /* Footer */
+    .footer {
+      background: #1E3A8A;
+      color: #FFFFFF;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    .footer p {
+      margin: 0;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header {
+        padding: 1rem 1.5rem;
+      }
+
+      .header-text h1 {
+        font-size: 1.2rem;
+      }
+
+      .header-text p {
+        font-size: 0.8rem;
+      }
+
+      .hero {
+        padding: 3rem 1.5rem;
+      }
+
+      .hero h2 {
+        font-size: 1.8rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .main-content {
+        padding: 2rem 1.5rem;
+      }
+
+      .portal-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+
+      .hero h2 {
+        font-size: 1.5rem;
+      }
+
+      .portal-card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Header -->
+  <header class="header">
+   <div class="header-content">
+    <div class="logo">
+     🌐
+    </div>
+    <div class="header-text">
+     <h1 id="site-title">Web Portal Hub</h1>
+     <p id="site-subtitle">หน้ารวมเว็บไซต์ขององค์กร</p>
+    </div>
+   </div>
+  </header><!-- Hero Section -->
+  <section class="hero">
+   <div class="hero-content">
+    <h2>ยินดีต้อนรับสู่ Web Portal Hub</h2>
+    <p id="intro-text">เข้าถึงทุกเว็บไซต์ demo ได้จากที่เดียว ค้นหาและใช้งานได้อย่างสะดวกรวดเร็ว</p>
+    <div class="search-container"><span class="search-icon">🔍</span> <input type="text" id="search-input" class="search-input" placeholder="ค้นหาเว็บไซต์...">
+    </div>
+   </div>
+  </section><!-- Main Content -->
+  <main class="main-content">
+   <h2 class="section-title">เว็บไซต์ทั้งหมด</h2>
+   <div class="portal-grid" id="portal-grid"><!-- Portal Cards will be generated here -->
+   </div>
+   <div class="no-results" id="no-results">
+    ไม่พบเว็บไซต์ที่ค้นหา กรุณาลองใช้คำค้นหาอื่น
+   </div>
+  </main><!-- Footer -->
+  <footer class="footer">
+   <p id="footer-text">© 2024 องค์กร. สงวนลิขสิทธิ์ | นโยบายความเป็นส่วนตัว | เงื่อนไขการใช้งาน</p>
+  </footer>
+  <script>
+    // Portal data - ชื่อไฟล์ตรงกับที่มีใน public folder
+    const portals = [
+      {
+        name: 'Billing Portal',
+        description: 'ระบบจัดการใบแจ้งหนี้และการชำระเงิน ตรวจสอบยอดค้างชำระและประวัติการชำระเงิน',
+        icon: '💳',
+        file: 'Billing Portal.html'
+      },
+      {
+        name: 'CD Website',
+        description: 'เว็บไซต์สำหรับแผนก CD แสดงข้อมูลและบริการของแผนก',
+        icon: '💿',
+        file: 'CD website.html'
+      },
+      {
+        name: 'Customer Service',
+        description: 'ศูนย์บริการลูกค้า ติดต่อสอบถาม แจ้งปัญหา และรับการสนับสนุนตลอด 24 ชั่วโมง',
+        icon: '🎧',
+        file: 'Customer Service.html'
+      },
+      {
+        name: 'E-Commerce V2',
+        description: 'ร้านค้าออนไลน์เวอร์ชั่นใหม่ ฟีเจอร์ครบครัน UI/UX ที่ดีขึ้น',
+        icon: '🛍️',
+        file: 'E-Commerce V2.html'
+      },
+      {
+        name: 'E-Commerce',
+        description: 'ร้านค้าออนไลน์ เลือกซื้อสินค้าและบริการ ชำระเงินปลอดภัย จัดส่งรวดเร็ว',
+        icon: '🛒',
+        file: 'E-Commerce.html'
+      },
+      {
+        name: 'Helpdesk V2',
+        description: 'ระบบ Helpdesk เวอร์ชั่นใหม่ ฟีเจอร์เพิ่มเติม การจัดการที่ดีขึ้น',
+        icon: '🔧',
+        file: 'Helpdesk v2.html'
+      },
+      {
+        name: 'Helpdesk',
+        description: 'ระบบแจ้งปัญหาและติดตามสถานะ รับการช่วยเหลือจากทีมงานมืออาชีพ',
+        icon: '🆘',
+        file: 'Helpdesk.html'
+      },
+      {
+        name: 'Intranet Employee',
+        description: 'เครือข่ายภายในองค์กร เข้าถึงข้อมูลพนักงาน ข่าวสาร และเอกสารภายใน',
+        icon: '👥',
+        file: 'Intra web employee.html'
+      },
+      {
+        name: 'Job Portal',
+        description: 'ระบบรับสมัครงาน ค้นหาตำแหน่งงานว่าง สมัครงานออนไลน์ ติดตามสถานะการสมัคร',
+        icon: '💼',
+        file: 'Job Portal.html'
+      },
+      {
+        name: 'MC Website',
+        description: 'เว็บไซต์สำหรับแผนก MC จัดการข้อมูลและกิจกรรมต่างๆ',
+        icon: '🎤',
+        file: 'MC website.html'
+      },
+      {
+        name: 'Meeting Room',
+        description: 'ระบบจองห้องประชุม ตรวจสอบห้องว่าง จัดการการประชุมและอุปกรณ์',
+        icon: '🏢',
+        file: 'Meeting Room.html'
+      },
+      {
+        name: 'Procurement System',
+        description: 'ระบบจัดซื้อจัดจ้าง ขอใบเสนอราคา อนุมัติการสั่งซื้อ และติดตามสถานะ',
+        icon: '📦',
+        file: 'Procurement System.html'
+      },
+      {
+        name: 'Training Portal',
+        description: 'ศูนย์การเรียนรู้ออนไลน์ หลักสูตรอบรม วิดีโอสอน และทดสอบความรู้',
+        icon: '📚',
+        file: 'Training Portal.html'
+      }
+    ];
+
+    // สร้าง portal cards
+    const portalGrid = document.getElementById('portal-grid');
+    
+    portals.forEach(portal => {
+      const card = document.createElement('div');
+      card.className = 'portal-card';
+      card.innerHTML = `
+        <div class="portal-icon">${portal.icon}</div>
+        <h3>${portal.name}</h3>
+        <p>${portal.description}</p>
+        <a href="${portal.file}" class="portal-button">เข้าใช้งาน</a>
+      `;
+      portalGrid.appendChild(card);
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const cards = document.querySelectorAll('.portal-card');
+      
+      cards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const description = card.querySelector('p').textContent.toLowerCase();
+        
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+</script>
+  <script>
+    // Element SDK Configuration
+    const defaultConfig = {
+      site_title: 'Web Portal Hub',
+      site_subtitle: 'หน้ารวมเว็บไซต์ขององค์กร',
+      intro_text: 'เข้าถึงทุกเว็บไซต์ demo ได้จากที่เดียว ค้นหาและใช้งานได้อย่างสะดวกรวดเร็ว',
+      search_placeholder: 'ค้นหาเว็บไซต์...',
+      footer_text: '© 2024 องค์กร. สงวนลิขสิทธิ์ | นโยบายความเป็นส่วนตัว | เงื่อนไขการใช้งาน',
+      background_color: '#f5f7fa',
+      primary_color: '#1E3A8A',
+      accent_color: '#10B981',
+      text_color: '#64748b',
+      card_background: '#FFFFFF'
+    };
+
+    async function onConfigChange(config) {
+      document.getElementById('site-title').textContent = config.site_title || defaultConfig.site_title;
+      document.getElementById('site-subtitle').textContent = config.site_subtitle || defaultConfig.site_subtitle;
+      document.getElementById('intro-text').textContent = config.intro_text || defaultConfig.intro_text;
+      document.getElementById('search-input').placeholder = config.search_placeholder || defaultConfig.search_placeholder;
+      document.getElementById('footer-text').textContent = config.footer_text || defaultConfig.footer_text;
+
+      // Apply colors
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const accentColor = config.accent_color || defaultConfig.accent_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const cardBackground = config.card_background || defaultConfig.card_background;
+
+      document.body.style.background = `linear-gradient(135deg, ${backgroundColor} 0%, ${backgroundColor} 100%)`;
+      
+      document.querySelectorAll('.header-text h1, .portal-card h3, .section-title').forEach(el => {
+        el.style.color = primaryColor;
+      });
+
+      document.querySelectorAll('.logo, .portal-icon').forEach(el => {
+        el.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor} 100%)`;
+      });
+
+      document.querySelector('.hero').style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor} 100%)`;
+      document.querySelector('.footer').style.background = primaryColor;
+
+      document.querySelectorAll('.portal-button').forEach(el => {
+        el.style.background = accentColor;
+      });
+
+      document.querySelectorAll('.header-text p, .portal-card p, .no-results').forEach(el => {
+        el.style.color = textColor;
+      });
+
+      document.querySelectorAll('.header, .portal-card, .search-input').forEach(el => {
+        el.style.background = cardBackground;
+      });
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.card_background || defaultConfig.card_background,
+              set: (value) => {
+                config.card_background = value;
+                window.elementSdk.setConfig({ card_background: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_color || defaultConfig.primary_color,
+              set: (value) => {
+                config.primary_color = value;
+                window.elementSdk.setConfig({ primary_color: value });
+              }
+            },
+            {
+              get: () => config.accent_color || defaultConfig.accent_color,
+              set: (value) => {
+                config.accent_color = value;
+                window.elementSdk.setConfig({ accent_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['site_title', config.site_title || defaultConfig.site_title],
+          ['site_subtitle', config.site_subtitle || defaultConfig.site_subtitle],
+          ['intro_text', config.intro_text || defaultConfig.intro_text],
+          ['search_placeholder', config.search_placeholder || defaultConfig.search_placeholder],
+          ['footer_text', config.footer_text || defaultConfig.footer_text]
+        ])
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99701104b6a5a1b1',t:'MTc2MTg4MTM1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

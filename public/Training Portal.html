@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="th">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training Portal | ระบบฝึกอบรมออนไลน์</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Prompt', sans-serif;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    .course-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .course-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
+    }
+    
+    .btn-primary {
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+    }
+    
+    .progress-bar {
+      transition: width 0.5s ease;
+    }
+    
+    .sidebar {
+      transition: transform 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar.hidden {
+        transform: translateX(-100%);
+      }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .quiz-option {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .quiz-option:hover {
+      background-color: #EFF6FF;
+      border-color: #1E3A8A;
+    }
+    
+    .quiz-option.selected {
+      background-color: #DBEAFE;
+      border-color: #1E3A8A;
+      border-width: 2px;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="bg-gray-50"><!-- Login Page -->
+  <div id="loginPage" class="min-h-full flex items-center justify-center px-4 py-12">
+   <div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 fade-in">
+    <div class="text-center mb-8">
+     <div class="w-20 h-20 bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+      <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+      </svg>
+     </div>
+     <h1 id="siteTitle" class="text-3xl font-bold text-blue-900 mb-2">Training Portal</h1>
+     <p id="welcomeMessage" class="text-gray-600">ยินดีต้อนรับสู่ระบบฝึกอบรมออนไลน์</p>
+    </div>
+    <form id="loginForm" class="space-y-6">
+     <div><label class="block text-sm font-medium text-gray-700 mb-2">ชื่อผู้ใช้</label> <input type="text" id="username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent outline-none transition" placeholder="กรอกชื่อผู้ใช้" required>
+     </div>
+     <div><label class="block text-sm font-medium text-gray-700 mb-2">รหัสผ่าน</label> <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent outline-none transition" placeholder="กรอกรหัสผ่าน" required>
+     </div>
+     <div class="text-right"><a href="#" class="text-sm text-blue-900 hover:underline">ลืมรหัสผ่าน?</a>
+     </div><button type="submit" class="w-full bg-blue-900 text-white py-3 rounded-lg font-medium btn-primary hover:bg-blue-800"> เข้าสู่ระบบ </button>
+    </form>
+   </div>
+  </div><!-- Main Dashboard -->
+  <div id="dashboardPage" class="hidden min-h-full"><!-- Sidebar -->
+   <aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-blue-900 text-white z-50 shadow-xl">
+    <div class="p-6">
+     <div class="flex items-center justify-between mb-8">
+      <h2 class="text-xl font-bold">Training Portal</h2><button id="closeSidebar" class="md:hidden text-white">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+       </svg></button>
+     </div>
+     <nav class="space-y-2"><a href="#" onclick="showPage('dashboard')" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-blue-800 hover:bg-blue-700 transition">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+       </svg><span>หน้าหลัก</span> </a> <a href="#" onclick="showPage('profile')" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-blue-800 transition">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+       </svg><span>โปรไฟล์</span> </a> <a href="#" onclick="logout()" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-blue-800 transition">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+       </svg><span>ออกจากระบบ</span> </a>
+     </nav>
+    </div>
+   </aside><!-- Main Content -->
+   <div class="md:ml-64"><!-- Top Bar -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+     <div class="flex items-center justify-between px-6 py-4"><button id="menuToggle" class="md:hidden text-gray-600">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+       </svg></button>
+      <h1 class="text-xl font-bold text-blue-900">ระบบฝึกอบรมออนไลน์</h1>
+      <div class="flex items-center space-x-4"><span id="userNameDisplay" class="text-sm text-gray-600 hidden md:block">สวัสดี, ผู้ใช้</span>
+       <div class="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center text-white font-medium"><span id="userInitial">U</span>
+       </div>
+      </div>
+     </div>
+    </header><!-- Dashboard Content -->
+    <main id="dashboardContent" class="p-6">
+     <div class="mb-8">
+      <h2 id="coursesHeading" class="text-2xl font-bold text-gray-800 mb-2">หลักสูตรที่เปิดให้เรียน</h2>
+      <p class="text-gray-600">เลือกหลักสูตรที่คุณสนใจเพื่อเริ่มการเรียนรู้</p>
+     </div><!-- Course Grid -->
+     <div id="courseGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"><!-- Courses will be rendered here -->
+     </div><!-- Progress Section -->
+     <div class="bg-white rounded-xl shadow-md p-6">
+      <h3 id="progressHeading" class="text-xl font-bold text-gray-800 mb-4">ความก้าวหน้าของคุณ</h3>
+      <div id="progressList" class="space-y-4"><!-- Progress items will be rendered here -->
+      </div>
+     </div>
+    </main><!-- Course Detail Page -->
+    <main id="courseDetailContent" class="hidden p-6"><button onclick="showPage('dashboard')" class="flex items-center text-blue-900 hover:text-blue-700 mb-6 transition">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg> กลับสู่หน้าหลัก </button>
+     <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <div class="bg-gradient-to-r from-blue-900 to-blue-700 p-8 text-white">
+       <h2 id="courseDetailTitle" class="text-3xl font-bold mb-2">ชื่อหลักสูตร</h2>
+       <p id="courseDetailDesc" class="text-blue-100">รายละเอียดหลักสูตร</p>
+      </div>
+      <div class="p-8">
+       <div class="mb-8">
+        <div class="flex justify-between items-center mb-2"><span class="text-sm font-medium text-gray-700">ความก้าวหน้า</span> <span id="courseProgressPercent" class="text-sm font-medium text-blue-900">0%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-3">
+         <div id="courseProgressBar" class="progress-bar bg-blue-900 h-3 rounded-full" style="width: 0%"></div>
+        </div>
+       </div>
+       <div class="grid md:grid-cols-2 gap-6 mb-8">
+        <div class="border border-gray-200 rounded-lg p-6">
+         <h4 class="font-semibold text-gray-800 mb-4">📚 เนื้อหาบทเรียน</h4>
+         <ul id="lessonList" class="space-y-3"><!-- Lessons will be rendered here -->
+         </ul>
+        </div>
+        <div class="border border-gray-200 rounded-lg p-6">
+         <h4 class="font-semibold text-gray-800 mb-4">📝 แบบทดสอบ</h4>
+         <p class="text-gray-600 mb-4">ทำแบบทดสอบเพื่อประเมินความเข้าใจของคุณ</p><button onclick="startQuiz()" class="w-full bg-blue-900 text-white py-3 rounded-lg font-medium btn-primary hover:bg-blue-800"> เริ่มทำแบบทดสอบ </button>
+        </div>
+       </div>
+      </div>
+     </div>
+    </main><!-- Profile Page -->
+    <main id="profileContent" class="hidden p-6">
+     <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">โปรไฟล์ของฉัน</h2>
+      <div class="bg-white rounded-xl shadow-md p-8 mb-6">
+       <div class="flex items-center space-x-6 mb-6">
+        <div class="w-24 h-24 bg-blue-900 rounded-full flex items-center justify-center text-white text-3xl font-bold"><span id="profileInitial">U</span>
+        </div>
+        <div>
+         <h3 id="profileName" class="text-2xl font-bold text-gray-800">ชื่อผู้ใช้</h3>
+         <p class="text-gray-600">แผนก: ฝ่ายพัฒนาบุคลากร</p>
+         <p class="text-gray-600">ตำแหน่ง: พนักงาน</p>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-md p-8">
+       <h3 class="text-xl font-bold text-gray-800 mb-6">สรุปความก้าวหน้า</h3>
+       <div id="profileProgressList" class="space-y-4"><!-- Progress summary will be rendered here -->
+       </div>
+      </div>
+     </div>
+    </main>
+   </div>
+  </div><!-- Quiz Modal -->
+  <div id="quizModal" class="modal">
+   <div class="modal-content">
+    <div class="flex justify-between items-center mb-6">
+     <h3 class="text-2xl font-bold text-gray-800">แบบทดสอบ</h3><button onclick="closeQuiz()" class="text-gray-400 hover:text-gray-600">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg></button>
+    </div>
+    <div id="quizContent"><!-- Quiz questions will be rendered here -->
+    </div>
+    <div id="quizResult" class="hidden text-center">
+     <div class="mb-6">
+      <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center" id="resultIcon"><!-- Result icon will be rendered here -->
+      </div>
+      <h4 class="text-2xl font-bold mb-2" id="resultTitle">ผลการทดสอบ</h4>
+      <p class="text-4xl font-bold text-blue-900 mb-2" id="resultScore">0/0</p>
+      <p class="text-gray-600" id="resultMessage">ข้อความผลลัพธ์</p>
+     </div><button onclick="closeQuiz()" class="w-full bg-blue-900 text-white py-3 rounded-lg font-medium btn-primary hover:bg-blue-800"> ปิด </button>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Reference course data
+    const courses = [
+      {
+        id: 'course-1',
+        title: 'การสื่อสารในองค์กร',
+        description: 'เรียนรู้เทคนิคการสื่อสารที่มีประสิทธิภาพในที่ทำงาน',
+        duration: '2 ชั่วโมง',
+        lessons: 8,
+        icon: '💬',
+        color: 'from-blue-500 to-blue-600'
+      },
+      {
+        id: 'course-2',
+        title: 'การบริหารเวลา',
+        description: 'เทคนิคการจัดการเวลาและเพิ่มประสิทธิภาพการทำงาน',
+        duration: '1.5 ชั่วโมง',
+        lessons: 6,
+        icon: '⏰',
+        color: 'from-green-500 to-green-600'
+      },
+      {
+        id: 'course-3',
+        title: 'ความปลอดภัยในการทำงาน',
+        description: 'หลักการและแนวปฏิบัติด้านความปลอดภัยในสถานที่ทำงาน',
+        duration: '3 ชั่วโมง',
+        lessons: 10,
+        icon: '🛡️',
+        color: 'from-red-500 to-red-600'
+      },
+      {
+        id: 'course-4',
+        title: 'ทักษะการนำเสนอ',
+        description: 'พัฒนาทักษะการนำเสนองานอย่างมืออาชีพ',
+        duration: '2.5 ชั่วโมง',
+        lessons: 7,
+        icon: '📊',
+        color: 'from-purple-500 to-purple-600'
+      },
+      {
+        id: 'course-5',
+        title: 'การทำงานเป็นทีม',
+        description: 'สร้างทีมงานที่แข็งแกร่งและมีประสิทธิภาพ',
+        duration: '2 ชั่วโมง',
+        lessons: 8,
+        icon: '👥',
+        color: 'from-orange-500 to-orange-600'
+      },
+      {
+        id: 'course-6',
+        title: 'การคิดเชิงสร้างสรรค์',
+        description: 'เทคนิคการคิดนอกกรอบและแก้ปัญหาอย่างสร้างสรรค์',
+        duration: '1.5 ชั่วโมง',
+        lessons: 5,
+        icon: '💡',
+        color: 'from-yellow-500 to-yellow-600'
+      }
+    ];
+
+    const quizQuestions = [
+      {
+        question: 'การสื่อสารที่ดีในองค์กรควรมีลักษณะอย่างไร?',
+        options: [
+          'ชัดเจน ตรงประเด็น และเข้าใจง่าย',
+          'ใช้คำยากและซับซ้อน',
+          'พูดเร็วและรัดกุม',
+          'ไม่ต้องฟังความคิดเห็นผู้อื่น'
+        ],
+        correct: 0
+      },
+      {
+        question: 'เทคนิคการบริหารเวลาที่สำคัญคือ?',
+        options: [
+          'ทำงานทุกอย่างพร้อมกัน',
+          'จัดลำดับความสำคัญของงาน',
+          'ทำงานที่ง่ายก่อนเสมอ',
+          'ไม่ต้องวางแผน'
+        ],
+        correct: 1
+      },
+      {
+        question: 'การทำงานเป็นทีมที่ดีต้องมีอะไร?',
+        options: [
+          'การแข่งขันกัน',
+          'การทำงานคนเดียว',
+          'การร่วมมือและเคารพซึ่งกันและกัน',
+          'การไม่สื่อสารกัน'
+        ],
+        correct: 2
+      }
+    ];
+
+    let currentUser = '';
+    let currentCourse = null;
+    let userProgress = [];
+    let quizAnswers = [];
+    let isDataSdkReady = false;
+
+    const defaultConfig = {
+      site_title: 'Training Portal',
+      welcome_message: 'ยินดีต้อนรับสู่ระบบฝึกอบรมออนไลน์',
+      courses_heading: 'หลักสูตรที่เปิดให้เรียน',
+      progress_heading: 'ความก้าวหน้าของคุณ',
+      background_color: '#F5F6FA',
+      surface_color: '#FFFFFF',
+      text_color: '#1F2937',
+      primary_action_color: '#1E3A8A',
+      secondary_action_color: '#3B82F6',
+      font_family: 'Prompt',
+      font_size: 16
+    };
+
+    const dataHandler = {
+      onDataChanged(data) {
+        userProgress = data;
+        if (document.getElementById('dashboardPage').classList.contains('hidden')) return;
+        
+        renderCourses();
+        renderProgress();
+        updateProfileProgress();
+      }
+    };
+
+    async function initDataSdk() {
+      if (!window.dataSdk) return;
+      
+      const result = await window.dataSdk.init(dataHandler);
+      if (result.isOk) {
+        isDataSdkReady = true;
+      }
+    }
+
+    async function initElementSdk() {
+      if (!window.elementSdk) return;
+
+      await window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          const siteTitle = config.site_title || defaultConfig.site_title;
+          const welcomeMessage = config.welcome_message || defaultConfig.welcome_message;
+          const coursesHeading = config.courses_heading || defaultConfig.courses_heading;
+          const progressHeading = config.progress_heading || defaultConfig.progress_heading;
+          const backgroundColor = config.background_color || defaultConfig.background_color;
+          const surfaceColor = config.surface_color || defaultConfig.surface_color;
+          const textColor = config.text_color || defaultConfig.text_color;
+          const primaryActionColor = config.primary_action_color || defaultConfig.primary_action_color;
+          const secondaryActionColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+          const fontFamily = config.font_family || defaultConfig.font_family;
+          const fontSize = config.font_size || defaultConfig.font_size;
+
+          document.getElementById('siteTitle').textContent = siteTitle;
+          document.getElementById('welcomeMessage').textContent = welcomeMessage;
+          document.getElementById('coursesHeading').textContent = coursesHeading;
+          document.getElementById('progressHeading').textContent = progressHeading;
+
+          document.body.style.backgroundColor = backgroundColor;
+          document.body.style.color = textColor;
+          document.body.style.fontFamily = `${fontFamily}, sans-serif`;
+          document.body.style.fontSize = `${fontSize}px`;
+
+          const surfaces = document.querySelectorAll('.bg-white');
+          surfaces.forEach(el => el.style.backgroundColor = surfaceColor);
+
+          const primaryButtons = document.querySelectorAll('.bg-blue-900, .btn-primary');
+          primaryButtons.forEach(el => {
+            el.style.backgroundColor = primaryActionColor;
+          });
+
+          const secondaryElements = document.querySelectorAll('.text-blue-900');
+          secondaryElements.forEach(el => {
+            el.style.color = secondaryActionColor;
+          });
+
+          const headings = document.querySelectorAll('h1, h2, h3, h4');
+          headings.forEach(el => {
+            const multiplier = el.tagName === 'H1' ? 2 : el.tagName === 'H2' ? 1.5 : el.tagName === 'H3' ? 1.25 : 1.1;
+            el.style.fontSize = `${fontSize * multiplier}px`;
+          });
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                if (window.elementSdk) {
+                  window.elementSdk.setConfig({ background_color: value });
+                }
+              }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => {
+                if (window.elementSdk) {
+                  window.elementSdk.setConfig({ surface_color: value });
+                }
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                if (window.elementSdk) {
+                  window.elementSdk.setConfig({ text_color: value });
+                }
+              }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (value) => {
+                if (window.elementSdk) {
+                  window.elementSdk.setConfig({ primary_action_color: value });
+                }
+              }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (value) => {
+                if (window.elementSdk) {
+                  window.elementSdk.setConfig({ secondary_action_color: value });
+                }
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.setConfig({ font_family: value });
+              }
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.setConfig({ font_size: value });
+              }
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['site_title', config.site_title || defaultConfig.site_title],
+          ['welcome_message', config.welcome_message || defaultConfig.welcome_message],
+          ['courses_heading', config.courses_heading || defaultConfig.courses_heading],
+          ['progress_heading', config.progress_heading || defaultConfig.progress_heading]
+        ])
+      });
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      currentUser = username;
+      
+      document.getElementById('userNameDisplay').textContent = `สวัสดี, ${username}`;
+      document.getElementById('userInitial').textContent = username.charAt(0).toUpperCase();
+      document.getElementById('profileInitial').textContent = username.charAt(0).toUpperCase();
+      document.getElementById('profileName').textContent = username;
+      
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('dashboardPage').classList.remove('hidden');
+      
+      renderCourses();
+      renderProgress();
+    });
+
+    function renderCourses() {
+      const grid = document.getElementById('courseGrid');
+      grid.innerHTML = courses.map(course => {
+        const progress = userProgress.find(p => p.course_id === course.id);
+        const progressPercent = progress ? progress.progress : 0;
+        
+        return `
+          <div class="course-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer" onclick="openCourse('${course.id}')">
+            <div class="bg-gradient-to-r ${course.color} p-6 text-white">
+              <div class="text-4xl mb-2">${course.icon}</div>
+              <h3 class="text-xl font-bold">${course.title}</h3>
+            </div>
+            <div class="p-6">
+              <p class="text-gray-600 mb-4">${course.description}</p>
+              <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                <span>⏱️ ${course.duration}</span>
+                <span>📚 ${course.lessons} บทเรียน</span>
+              </div>
+              <div class="mb-4">
+                <div class="flex justify-between text-xs text-gray-600 mb-1">
+                  <span>ความก้าวหน้า</span>
+                  <span>${progressPercent}%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="progress-bar bg-blue-900 h-2 rounded-full" style="width: ${progressPercent}%"></div>
+                </div>
+              </div>
+              <button class="w-full bg-blue-900 text-white py-2 rounded-lg font-medium btn-primary hover:bg-blue-800">
+                ${progressPercent > 0 ? 'เรียนต่อ' : 'เริ่มเรียน'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderProgress() {
+      const list = document.getElementById('progressList');
+      
+      if (userProgress.length === 0) {
+        list.innerHTML = '<p class="text-gray-500 text-center py-8">ยังไม่มีความก้าวหน้า เริ่มเรียนหลักสูตรแรกของคุณเลย!</p>';
+        return;
+      }
+      
+      list.innerHTML = userProgress.map(progress => {
+        const course = courses.find(c => c.id === progress.course_id);
+        if (!course) return '';
+        
+        return `
+          <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div class="flex items-center space-x-4">
+              <div class="text-3xl">${course.icon}</div>
+              <div>
+                <h4 class="font-semibold text-gray-800">${course.title}</h4>
+                <p class="text-sm text-gray-600">${progress.progress}% เสร็จสมบูรณ์</p>
+              </div>
+            </div>
+            <div class="text-right">
+              ${progress.completed ? 
+                '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">✓ เสร็จสิ้น</span>' :
+                '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">กำลังเรียน</span>'
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateProfileProgress() {
+      const list = document.getElementById('profileProgressList');
+      
+      if (userProgress.length === 0) {
+        list.innerHTML = '<p class="text-gray-500 text-center py-8">ยังไม่มีข้อมูลความก้าวหน้า</p>';
+        return;
+      }
+      
+      const completedCourses = userProgress.filter(p => p.completed).length;
+      const totalProgress = userProgress.reduce((sum, p) => sum + p.progress, 0) / userProgress.length;
+      
+      list.innerHTML = `
+        <div class="grid md:grid-cols-3 gap-6 mb-6">
+          <div class="bg-blue-50 rounded-lg p-6 text-center">
+            <div class="text-3xl font-bold text-blue-900 mb-2">${userProgress.length}</div>
+            <div class="text-gray-600">หลักสูตรที่เรียน</div>
+          </div>
+          <div class="bg-green-50 rounded-lg p-6 text-center">
+            <div class="text-3xl font-bold text-green-900 mb-2">${completedCourses}</div>
+            <div class="text-gray-600">เสร็จสมบูรณ์</div>
+          </div>
+          <div class="bg-purple-50 rounded-lg p-6 text-center">
+            <div class="text-3xl font-bold text-purple-900 mb-2">${Math.round(totalProgress)}%</div>
+            <div class="text-gray-600">ความก้าวหน้าเฉลี่ย</div>
+          </div>
+        </div>
+        ${userProgress.map(progress => {
+          const course = courses.find(c => c.id === progress.course_id);
+          if (!course) return '';
+          
+          return `
+            <div class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center space-x-3">
+                  <span class="text-2xl">${course.icon}</span>
+                  <h4 class="font-semibold text-gray-800">${course.title}</h4>
+                </div>
+                ${progress.quiz_score !== undefined ? 
+                  `<span class="text-sm font-medium text-blue-900">คะแนน: ${progress.quiz_score}/${quizQuestions.length}</span>` : 
+                  ''
+                }
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="progress-bar bg-blue-900 h-2 rounded-full" style="width: ${progress.progress}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      `;
+    }
+
+    async function openCourse(courseId) {
+      currentCourse = courses.find(c => c.id === courseId);
+      if (!currentCourse) return;
+      
+      const progress = userProgress.find(p => p.course_id === courseId);
+      const progressPercent = progress ? progress.progress : 0;
+      
+      document.getElementById('courseDetailTitle').textContent = currentCourse.title;
+      document.getElementById('courseDetailDesc').textContent = currentCourse.description;
+      document.getElementById('courseProgressPercent').textContent = `${progressPercent}%`;
+      document.getElementById('courseProgressBar').style.width = `${progressPercent}%`;
+      
+      const lessonList = document.getElementById('lessonList');
+      lessonList.innerHTML = Array.from({length: currentCourse.lessons}, (_, i) => {
+        const lessonNum = i + 1;
+        const isCompleted = progressPercent >= (lessonNum / currentCourse.lessons * 100);
+        return `
+          <li class="flex items-center justify-between">
+            <span class="text-gray-700">บทที่ ${lessonNum}: เนื้อหาบทเรียน</span>
+            ${isCompleted ? '<span class="text-green-600">✓</span>' : '<span class="text-gray-400">○</span>'}
+          </li>
+        `;
+      }).join('');
+      
+      if (!progress && isDataSdkReady) {
+        const createResult = await window.dataSdk.create({
+          course_id: courseId,
+          user_name: currentUser,
+          progress: 0,
+          completed: false,
+          last_accessed: new Date().toISOString()
+        });
+      }
+      
+      document.getElementById('dashboardContent').classList.add('hidden');
+      document.getElementById('courseDetailContent').classList.remove('hidden');
+    }
+
+    function startQuiz() {
+      quizAnswers = [];
+      const quizContent = document.getElementById('quizContent');
+      
+      quizContent.innerHTML = quizQuestions.map((q, index) => `
+        <div class="mb-6">
+          <h4 class="font-semibold text-gray-800 mb-3">${index + 1}. ${q.question}</h4>
+          <div class="space-y-2">
+            ${q.options.map((option, optIndex) => `
+              <div class="quiz-option border-2 border-gray-200 rounded-lg p-3" onclick="selectAnswer(${index}, ${optIndex})">
+                ${option}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+      
+      quizContent.innerHTML += `
+        <button onclick="submitQuiz()" class="w-full bg-blue-900 text-white py-3 rounded-lg font-medium btn-primary hover:bg-blue-800 mt-4">
+          ส่งคำตอบ
+        </button>
+      `;
+      
+      document.getElementById('quizResult').classList.add('hidden');
+      document.getElementById('quizContent').classList.remove('hidden');
+      document.getElementById('quizModal').classList.add('active');
+    }
+
+    function selectAnswer(questionIndex, optionIndex) {
+      const options = document.querySelectorAll(`#quizContent > div:nth-child(${questionIndex + 1}) .quiz-option`);
+      options.forEach((opt, idx) => {
+        if (idx === optionIndex) {
+          opt.classList.add('selected');
+        } else {
+          opt.classList.remove('selected');
+        }
+      });
+      
+      quizAnswers[questionIndex] = optionIndex;
+    }
+
+    async function submitQuiz() {
+      if (quizAnswers.length < quizQuestions.length) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+        toast.textContent = 'กรุณาตอบคำถามให้ครบทุกข้อ';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+        return;
+      }
+      
+      let score = 0;
+      quizQuestions.forEach((q, index) => {
+        if (quizAnswers[index] === q.correct) score++;
+      });
+      
+      const percentage = Math.round((score / quizQuestions.length) * 100);
+      const passed = percentage >= 70;
+      
+      document.getElementById('quizContent').classList.add('hidden');
+      document.getElementById('quizResult').classList.remove('hidden');
+      
+      const resultIcon = document.getElementById('resultIcon');
+      resultIcon.className = `w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center ${passed ? 'bg-green-100' : 'bg-red-100'}`;
+      resultIcon.innerHTML = passed ? 
+        '<svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' :
+        '<svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+      
+      document.getElementById('resultTitle').textContent = passed ? 'ยินดีด้วย! คุณผ่านการทดสอบ' : 'เสียใจด้วย คุณไม่ผ่านการทดสอบ';
+      document.getElementById('resultScore').textContent = `${score}/${quizQuestions.length}`;
+      document.getElementById('resultMessage').textContent = passed ? 
+        'คุณได้รับใบรับรองสำหรับหลักสูตรนี้แล้ว' : 
+        'กรุณาทบทวนเนื้อหาและลองทำแบบทดสอบอีกครั้ง';
+      
+      if (currentCourse && isDataSdkReady) {
+        const progress = userProgress.find(p => p.course_id === currentCourse.id);
+        if (progress) {
+          const updatedProgress = {
+            ...progress,
+            progress: 100,
+            completed: passed,
+            quiz_score: score,
+            last_accessed: new Date().toISOString()
+          };
+          await window.dataSdk.update(updatedProgress);
+        }
+      }
+    }
+
+    function closeQuiz() {
+      document.getElementById('quizModal').classList.remove('active');
+    }
+
+    function showPage(page) {
+      document.getElementById('dashboardContent').classList.add('hidden');
+      document.getElementById('courseDetailContent').classList.add('hidden');
+      document.getElementById('profileContent').classList.add('hidden');
+      
+      if (page === 'dashboard') {
+        document.getElementById('dashboardContent').classList.remove('hidden');
+        renderCourses();
+        renderProgress();
+      } else if (page === 'profile') {
+        document.getElementById('profileContent').classList.remove('hidden');
+        updateProfileProgress();
+      }
+      
+      if (window.innerWidth < 768) {
+        document.getElementById('sidebar').classList.add('hidden');
+      }
+    }
+
+    function logout() {
+      document.getElementById('dashboardPage').classList.add('hidden');
+      document.getElementById('loginPage').classList.remove('hidden');
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      currentUser = '';
+      userProgress = [];
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.remove('hidden');
+    });
+
+    document.getElementById('closeSidebar').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.add('hidden');
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) {
+        document.getElementById('sidebar').classList.remove('hidden');
+      }
+    });
+
+    initDataSdk();
+    initElementSdk();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'996ff07457208943',t:'MTc2MTg4MDAxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

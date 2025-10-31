@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="th">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบแจ้งซ่อม / Helpdesk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Prompt', sans-serif;
+      background: #F8FAFC;
+      color: #1F2937;
+      min-height: 100%;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Header */
+    .header {
+      background: #1E3A8A;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .site-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-weight: 400;
+      transition: opacity 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      opacity: 0.8;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .hamburger span {
+      width: 24px;
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+      transition: 0.3s;
+    }
+
+    /* Mobile Menu */
+    .mobile-menu {
+      display: none;
+      background: #1E3A8A;
+      padding: 1rem 2rem;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .mobile-menu.active {
+      display: flex;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Dashboard */
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-header h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1E3A8A;
+    }
+
+    .dashboard-header p {
+      color: #6B7280;
+      font-size: 1rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      color: #6B7280;
+      font-size: 0.95rem;
+    }
+
+    .stat-card.pending .stat-number { color: #9CA3AF; }
+    .stat-card.progress .stat-number { color: #06B6D4; }
+    .stat-card.completed .stat-number { color: #10B981; }
+
+    /* Primary Button */
+    .btn-primary {
+      background: #06B6D4;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: inline-block;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .btn-primary:hover {
+      background: #0891B2;
+    }
+
+    .btn-secondary {
+      background: #374151;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: #1F2937;
+    }
+
+    .action-section {
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    /* Announcements */
+    .announcements {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-top: 2rem;
+    }
+
+    .announcements h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #1E3A8A;
+    }
+
+    .announcement-item {
+      padding: 1rem;
+      border-left: 4px solid #06B6D4;
+      background: #F0F9FF;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .announcement-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .announcement-date {
+      font-size: 0.85rem;
+      color: #6B7280;
+      margin-bottom: 0.25rem;
+    }
+
+    .announcement-text {
+      font-size: 1rem;
+      color: #1F2937;
+    }
+
+    /* Form */
+    .form-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .form-container h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #1E3A8A;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Prompt', sans-serif;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #06B6D4;
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+    }
+
+    /* Ticket List */
+    .ticket-filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .filter-select {
+      padding: 0.75rem;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Prompt', sans-serif;
+    }
+
+    .ticket-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .ticket-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .ticket-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .ticket-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .ticket-id {
+      font-weight: 600;
+      color: #1E3A8A;
+      font-size: 1.1rem;
+    }
+
+    .ticket-status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .status-pending {
+      background: #F3F4F6;
+      color: #6B7280;
+    }
+
+    .status-progress {
+      background: #CFFAFE;
+      color: #0891B2;
+    }
+
+    .status-completed {
+      background: #D1FAE5;
+      color: #059669;
+    }
+
+    .ticket-category {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: #EEF2FF;
+      color: #4F46E5;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .ticket-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1F2937;
+    }
+
+    .ticket-date {
+      font-size: 0.9rem;
+      color: #6B7280;
+    }
+
+    /* Ticket Detail */
+    .detail-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .detail-header {
+      border-bottom: 2px solid #E5E7EB;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .detail-header h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #1E3A8A;
+      margin-bottom: 0.5rem;
+    }
+
+    .detail-meta {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .meta-label {
+      font-size: 0.85rem;
+      color: #6B7280;
+    }
+
+    .meta-value {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #1F2937;
+    }
+
+    .detail-section {
+      margin-bottom: 2rem;
+    }
+
+    .detail-section h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #374151;
+    }
+
+    .detail-content {
+      line-height: 1.6;
+      color: #4B5563;
+    }
+
+    .notes-section {
+      background: #F9FAFB;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-top: 2rem;
+    }
+
+    .notes-section textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Prompt', sans-serif;
+      min-height: 100px;
+      margin-bottom: 1rem;
+    }
+
+    /* Footer */
+    .footer {
+      background: #F3F4F6;
+      padding: 2rem;
+      margin-top: 4rem;
+      border-top: 1px solid #E5E7EB;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .footer-contact {
+      margin-bottom: 1rem;
+      color: #4B5563;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .footer-link {
+      color: #6B7280;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .footer-link:hover {
+      color: #1E3A8A;
+    }
+
+    /* Floating Action Button (Mobile) */
+    .fab {
+      display: none;
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 60px;
+      height: 60px;
+      background: #06B6D4;
+      color: white;
+      border-radius: 50%;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 0.2s, box-shadow 0.2s;
+      z-index: 100;
+    }
+
+    .fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    }
+
+    /* Success Message */
+    .success-message {
+      background: #D1FAE5;
+      color: #065F46;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid #10B981;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    /* Page Sections */
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header {
+        padding: 1rem;
+      }
+
+      .nav-menu {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .dashboard-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-primary {
+        width: 100%;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .form-actions button {
+        width: 100%;
+      }
+
+      .ticket-filters {
+        flex-direction: column;
+      }
+
+      .search-box {
+        min-width: 100%;
+      }
+
+      .filter-select {
+        width: 100%;
+      }
+
+      .detail-meta {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .fab {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .action-section .btn-primary {
+        display: none;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Header -->
+  <div class="header">
+   <div class="logo-section">
+    <div class="logo">
+     🔧
+    </div>
+    <div class="site-title" id="siteTitle">
+     ระบบแจ้งซ่อม / Helpdesk
+    </div>
+   </div>
+   <nav class="nav-menu"><a class="nav-link" onclick="showPage('dashboard')">หน้าแรก</a> <a class="nav-link" onclick="showPage('create')">แจ้งปัญหาใหม่</a> <a class="nav-link" onclick="showPage('list')">รายการแจ้งปัญหา</a> <a class="nav-link" onclick="showPage('contact')">ติดต่อฝ่าย IT</a>
+   </nav>
+   <div class="hamburger" onclick="toggleMobileMenu()"><span></span> <span></span> <span></span>
+   </div>
+  </div><!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu"><a class="nav-link" onclick="showPage('dashboard'); toggleMobileMenu()">หน้าแรก</a> <a class="nav-link" onclick="showPage('create'); toggleMobileMenu()">แจ้งปัญหาใหม่</a> <a class="nav-link" onclick="showPage('list'); toggleMobileMenu()">รายการแจ้งปัญหา</a> <a class="nav-link" onclick="showPage('contact'); toggleMobileMenu()">ติดต่อฝ่าย IT</a>
+  </div><!-- Dashboard Page -->
+  <div class="page-section active" id="dashboardPage">
+   <div class="container">
+    <div class="dashboard-header">
+     <h1>ยินดีต้อนรับสู่ระบบแจ้งซ่อม</h1>
+     <p id="companyName">บริษัท ตัวอย่าง จำกัด</p>
+    </div>
+    <div class="stats-grid">
+     <div class="stat-card pending">
+      <div class="stat-icon">
+       ⏳
+      </div>
+      <div class="stat-number">
+       12
+      </div>
+      <div class="stat-label">
+       รอดำเนินการ
+      </div>
+     </div>
+     <div class="stat-card progress">
+      <div class="stat-icon">
+       🔄
+      </div>
+      <div class="stat-number">
+       8
+      </div>
+      <div class="stat-label">
+       กำลังดำเนินการ
+      </div>
+     </div>
+     <div class="stat-card completed">
+      <div class="stat-icon">
+       ✅
+      </div>
+      <div class="stat-number">
+       45
+      </div>
+      <div class="stat-label">
+       ดำเนินการเสร็จสิ้น
+      </div>
+     </div>
+    </div>
+    <div class="action-section"><button class="btn-primary" onclick="showPage('create')">+ แจ้งปัญหาใหม่</button>
+    </div>
+    <div class="announcements">
+     <h2>📢 ประกาศจากฝ่าย IT</h2>
+     <div class="announcement-item">
+      <div class="announcement-date">
+       15 มกราคม 2567
+      </div>
+      <div class="announcement-text">
+       ระบบจะปิดปรับปรุงชั่วคราวในวันเสาร์ที่ 20 มกราคม 2567 เวลา 22.00-24.00 น.
+      </div>
+     </div>
+     <div class="announcement-item">
+      <div class="announcement-date">
+       10 มกราคม 2567
+      </div>
+      <div class="announcement-text">
+       เปิดให้บริการระบบแจ้งซ่อมออนไลน์แล้ว สามารถแจ้งปัญหาได้ตลอด 24 ชั่วโมง
+      </div>
+     </div>
+    </div>
+   </div>
+  </div><!-- Create Ticket Page -->
+  <div class="page-section" id="createPage">
+   <div class="container">
+    <div class="form-container">
+     <h2>แจ้งปัญหาใหม่</h2>
+     <div class="success-message" id="successMessage">
+      ✅ ระบบได้รับข้อมูลเรียบร้อยแล้ว (ตัวอย่าง) หมายเลขคำขอ: #TK2024001
+     </div>
+     <form id="ticketForm" onsubmit="submitTicket(event)">
+      <div class="form-group"><label for="category">หมวดหมู่ *</label> <select id="category" required> <option value="">-- เลือกหมวดหมู่ --</option> <option value="it">ระบบ IT</option> <option value="hardware">อุปกรณ์คอมพิวเตอร์</option> <option value="network">เครือข่าย / อินเทอร์เน็ต</option> <option value="software">โปรแกรม / ซอฟต์แวร์</option> <option value="facilities">สถานที่ / อาคาร</option> <option value="other">อื่น ๆ</option> </select>
+      </div>
+      <div class="form-group"><label for="subject">หัวข้อเรื่อง *</label> <input type="text" id="subject" placeholder="เช่น คอมพิวเตอร์เปิดไม่ติด" required>
+      </div>
+      <div class="form-group"><label for="description">รายละเอียดปัญหา *</label> <textarea id="description" placeholder="กรุณาอธิบายปัญหาที่พบโดยละเอียด..." required></textarea>
+      </div>
+      <div class="form-group"><label for="attachment">แนบรูปภาพ (ตัวอย่าง)</label> <input type="file" id="attachment" accept="image/*">
+      </div>
+      <div class="form-group"><label for="priority">ระดับความเร่งด่วน *</label> <select id="priority" required> <option value="low">ต่ำ - ไม่เร่งด่วน</option> <option value="medium" selected>ปานกลาง - ดำเนินการตามปกติ</option> <option value="high">สูง - เร่งด่วน</option> </select>
+      </div>
+      <div class="form-actions"><button type="button" class="btn-secondary" onclick="showPage('dashboard')">ยกเลิก</button> <button type="submit" class="btn-primary">ส่งแจ้งปัญหา</button>
+      </div>
+     </form>
+    </div>
+   </div>
+  </div><!-- Ticket List Page -->
+  <div class="page-section" id="listPage">
+   <div class="container">
+    <h2 style="font-size: 1.75rem; font-weight: 600; margin-bottom: 1.5rem; color: #1E3A8A;">รายการแจ้งปัญหา</h2>
+    <div class="ticket-filters">
+     <div class="search-box"><input type="text" placeholder="🔍 ค้นหาหมายเลขคำขอหรือหัวข้อ..." id="searchInput" oninput="filterTickets()">
+     </div><select class="filter-select" id="statusFilter" onchange="filterTickets()"> <option value="all">ทุกสถานะ</option> <option value="pending">รอดำเนินการ</option> <option value="progress">กำลังดำเนินการ</option> <option value="completed">เสร็จสิ้น</option> </select>
+    </div>
+    <div class="ticket-grid" id="ticketGrid"><!-- Tickets will be rendered here -->
+    </div>
+   </div>
+  </div><!-- Ticket Detail Page -->
+  <div class="page-section" id="detailPage">
+   <div class="container">
+    <div class="detail-container">
+     <div class="detail-header">
+      <h2 id="detailTitle">รายละเอียดคำขอ</h2>
+      <div class="detail-meta">
+       <div class="meta-item"><span class="meta-label">หมายเลขคำขอ</span> <span class="meta-value" id="detailId">#TK2024001</span>
+       </div>
+       <div class="meta-item"><span class="meta-label">หมวดหมู่</span> <span class="meta-value" id="detailCategory">ระบบ IT</span>
+       </div>
+       <div class="meta-item"><span class="meta-label">วันที่แจ้ง</span> <span class="meta-value" id="detailDate">15 ม.ค. 2567</span>
+       </div>
+       <div class="meta-item"><span class="meta-label">สถานะ</span> <span class="meta-value" id="detailStatus"> <span class="ticket-status status-progress">กำลังดำเนินการ</span> </span>
+       </div>
+      </div>
+     </div>
+     <div class="detail-section">
+      <h3>รายละเอียดปัญหา</h3>
+      <div class="detail-content" id="detailDescription">
+       คอมพิวเตอร์เครื่องที่โต๊ะทำงานเปิดไม่ติด หน้าจอไม่แสดงผล แต่ไฟ LED ที่เครื่องยังติดอยู่ ได้ลองถอดปลั๊กและเสียบใหม่แล้ว แต่ยังไม่สามารถใช้งานได้
+      </div>
+     </div>
+     <div class="notes-section">
+      <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #374151;">บันทึกหมายเหตุ / อัปเดตสถานะ (ตัวอย่าง)</h3><textarea placeholder="เพิ่มหมายเหตุหรืออัปเดตความคืบหน้า..."></textarea> <button class="btn-primary">บันทึก</button>
+     </div>
+     <div style="margin-top: 2rem;"><button class="btn-secondary" onclick="showPage('list')">← กลับไปรายการ</button>
+     </div>
+    </div>
+   </div>
+  </div><!-- Contact Page -->
+  <div class="page-section" id="contactPage">
+   <div class="container">
+    <div class="form-container">
+     <h2>ติดต่อฝ่าย IT</h2>
+     <div style="line-height: 1.8; color: #4B5563;">
+      <p><strong>ฝ่ายสนับสนุนเทคโนโลยีสารสนเทศ</strong></p>
+      <p>📧 อีเมล: <span id="contactEmail">support@example.com</span></p>
+      <p>📞 โทรศัพท์: 02-XXX-XXXX ต่อ 1234</p>
+      <p>⏰ เวลาทำการ: <span id="workingHours">จันทร์–ศุกร์ 08.30–17.30 น.</span></p>
+      <p style="margin-top: 1.5rem;">สำหรับปัญหาเร่งด่วนนอกเวลาทำการ กรุณาติดต่อ: 08X-XXX-XXXX</p>
+     </div>
+     <div style="margin-top: 2rem;"><button class="btn-secondary" onclick="showPage('dashboard')">← กลับหน้าแรก</button>
+     </div>
+    </div>
+   </div>
+  </div><!-- Floating Action Button --> <button class="fab" onclick="showPage('create')" title="แจ้งปัญหาใหม่">+</button> <!-- Footer -->
+  <div class="footer">
+   <div class="footer-content">
+    <div class="footer-contact">
+     <p>ติดต่อฝ่ายสนับสนุน IT ได้ที่ <span id="footerEmail">support@example.com</span></p>
+     <p>เวลาทำการ: <span id="footerHours">จันทร์–ศุกร์ 08.30–17.30 น.</span></p>
+    </div>
+    <div class="footer-links"><a href="#" class="footer-link">นโยบายความเป็นส่วนตัว</a> <a href="#" class="footer-link">เงื่อนไขการใช้งาน</a>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Sample ticket data
+    const sampleTickets = [
+      {
+        id: '#TK2024001',
+        category: 'ระบบ IT',
+        title: 'คอมพิวเตอร์เปิดไม่ติด',
+        date: '15 ม.ค. 2567',
+        status: 'progress',
+        statusText: 'กำลังดำเนินการ',
+        description: 'คอมพิวเตอร์เครื่องที่โต๊ะทำงานเปิดไม่ติด หน้าจอไม่แสดงผล'
+      },
+      {
+        id: '#TK2024002',
+        category: 'เครือข่าย',
+        title: 'อินเทอร์เน็ตช้า',
+        date: '14 ม.ค. 2567',
+        status: 'pending',
+        statusText: 'รอดำเนินการ',
+        description: 'อินเทอร์เน็ตในห้องประชุมชั้น 3 ช้ามาก ใช้งานไม่ได้'
+      },
+      {
+        id: '#TK2024003',
+        category: 'โปรแกรม',
+        title: 'ติดตั้ง Microsoft Office',
+        date: '13 ม.ค. 2567',
+        status: 'completed',
+        statusText: 'เสร็จสิ้น',
+        description: 'ขอติดตั้งโปรแกรม Microsoft Office บนเครื่องใหม่'
+      },
+      {
+        id: '#TK2024004',
+        category: 'อุปกรณ์',
+        title: 'เมาส์ชำรุด',
+        date: '12 ม.ค. 2567',
+        status: 'completed',
+        statusText: 'เสร็จสิ้น',
+        description: 'เมาส์คลิกไม่ติด ขอเปลี่ยนเครื่องใหม่'
+      },
+      {
+        id: '#TK2024005',
+        category: 'สถานที่',
+        title: 'แอร์ห้องประชุมเสีย',
+        date: '11 ม.ค. 2567',
+        status: 'progress',
+        statusText: 'กำลังดำเนินการ',
+        description: 'แอร์ห้องประชุม A ไม่เย็น ต้องการซ่อม'
+      }
+    ];
+
+    let currentTickets = [...sampleTickets];
+
+    // Page navigation
+    function showPage(pageName) {
+      const pages = document.querySelectorAll('.page-section');
+      pages.forEach(page => page.classList.remove('active'));
+      
+      const targetPage = document.getElementById(pageName + 'Page');
+      if (targetPage) {
+        targetPage.classList.add('active');
+        
+        if (pageName === 'list') {
+          renderTickets();
+        }
+      }
+      
+      window.scrollTo(0, 0);
+    }
+
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('active');
+    }
+
+    // Submit ticket form
+    function submitTicket(event) {
+      event.preventDefault();
+      
+      const successMessage = document.getElementById('successMessage');
+      successMessage.classList.add('show');
+      
+      document.getElementById('ticketForm').reset();
+      
+      setTimeout(() => {
+        successMessage.classList.remove('show');
+      }, 5000);
+      
+      window.scrollTo(0, 0);
+    }
+
+    // Render tickets
+    function renderTickets() {
+      const ticketGrid = document.getElementById('ticketGrid');
+      ticketGrid.innerHTML = '';
+      
+      currentTickets.forEach(ticket => {
+        const ticketCard = document.createElement('div');
+        ticketCard.className = 'ticket-card';
+        ticketCard.onclick = () => showTicketDetail(ticket);
+        
+        ticketCard.innerHTML = `
+          <div class="ticket-header">
+            <div class="ticket-id">${ticket.id}</div>
+            <div class="ticket-status status-${ticket.status}">${ticket.statusText}</div>
+          </div>
+          <div class="ticket-category">${ticket.category}</div>
+          <div class="ticket-title">${ticket.title}</div>
+          <div class="ticket-date">📅 ${ticket.date}</div>
+        `;
+        
+        ticketGrid.appendChild(ticketCard);
+      });
+    }
+
+    // Show ticket detail
+    function showTicketDetail(ticket) {
+      document.getElementById('detailId').textContent = ticket.id;
+      document.getElementById('detailCategory').textContent = ticket.category;
+      document.getElementById('detailDate').textContent = ticket.date;
+      document.getElementById('detailDescription').textContent = ticket.description;
+      
+      const statusSpan = document.getElementById('detailStatus').querySelector('.ticket-status');
+      statusSpan.className = `ticket-status status-${ticket.status}`;
+      statusSpan.textContent = ticket.statusText;
+      
+      showPage('detail');
+    }
+
+    // Filter tickets
+    function filterTickets() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      
+      currentTickets = sampleTickets.filter(ticket => {
+        const matchesSearch = ticket.id.toLowerCase().includes(searchTerm) || 
+                            ticket.title.toLowerCase().includes(searchTerm);
+        const matchesStatus = statusFilter === 'all' || ticket.status === statusFilter;
+        
+        return matchesSearch && matchesStatus;
+      });
+      
+      renderTickets();
+    }
+
+    // Element SDK Configuration
+    const defaultConfig = {
+      site_title: 'ระบบแจ้งซ่อม / Helpdesk',
+      company_name: 'บริษัท ตัวอย่าง จำกัด',
+      contact_email: 'support@example.com',
+      working_hours: 'จันทร์–ศุกร์ 08.30–17.30 น.',
+      background_color: '#F8FAFC',
+      header_color: '#1E3A8A',
+      primary_color: '#06B6D4',
+      secondary_color: '#374151',
+      text_color: '#1F2937',
+      font_family: 'Prompt',
+      font_size: 16
+    };
+
+    async function onConfigChange(config) {
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'sans-serif';
+      const baseSize = config.font_size || defaultConfig.font_size;
+      
+      document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      document.body.style.fontSize = `${baseSize}px`;
+      document.body.style.background = config.background_color || defaultConfig.background_color;
+      document.body.style.color = config.text_color || defaultConfig.text_color;
+      
+      const headers = document.querySelectorAll('.header');
+      headers.forEach(header => {
+        header.style.background = config.header_color || defaultConfig.header_color;
+      });
+      
+      const primaryButtons = document.querySelectorAll('.btn-primary, .fab');
+      primaryButtons.forEach(btn => {
+        btn.style.background = config.primary_color || defaultConfig.primary_color;
+      });
+      
+      const secondaryButtons = document.querySelectorAll('.btn-secondary');
+      secondaryButtons.forEach(btn => {
+        btn.style.background = config.secondary_color || defaultConfig.secondary_color;
+      });
+      
+      document.getElementById('siteTitle').textContent = config.site_title || defaultConfig.site_title;
+      document.getElementById('companyName').textContent = config.company_name || defaultConfig.company_name;
+      document.getElementById('contactEmail').textContent = config.contact_email || defaultConfig.contact_email;
+      document.getElementById('workingHours').textContent = config.working_hours || defaultConfig.working_hours;
+      document.getElementById('footerEmail').textContent = config.contact_email || defaultConfig.contact_email;
+      document.getElementById('footerHours').textContent = config.working_hours || defaultConfig.working_hours;
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.header_color || defaultConfig.header_color,
+            set: (value) => {
+              config.header_color = value;
+              window.elementSdk.setConfig({ header_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (value) => {
+              config.primary_color = value;
+              window.elementSdk.setConfig({ primary_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_color || defaultConfig.secondary_color,
+            set: (value) => {
+              config.secondary_color = value;
+              window.elementSdk.setConfig({ secondary_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['site_title', config.site_title || defaultConfig.site_title],
+        ['company_name', config.company_name || defaultConfig.company_name],
+        ['contact_email', config.contact_email || defaultConfig.contact_email],
+        ['working_hours', config.working_hours || defaultConfig.working_hours]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+
+    // Initialize
+    renderTickets();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'996fbd08f21d8ad1',t:'MTc2MTg3NzkxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
